@@ -95,4 +95,9 @@ public class Image
 		}
 		return extracted;
 	}
+	public void normalize(){
+		for(int i=0;i<data.length;i++){
+			data[i] = data[i]/128-1;
+		}
+	}
 }

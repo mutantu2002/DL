@@ -338,6 +338,7 @@ public class ImageUtils
 			for (int x = 0; x < originalImage.getWidth(); x++) 
 			{
 				float pixel = image.getPixel(x, y);
+				pixel/=256;
 				originalImage.setRGB(x, y, new Color(pixel, pixel, pixel).getRGB());
 			}
 		}

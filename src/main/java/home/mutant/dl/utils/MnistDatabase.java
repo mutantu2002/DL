@@ -25,6 +25,13 @@ public class MnistDatabase
 		ImageUtils.loadImages(trainImages, testImages, trainLabels, testLabels, Style.GREY);
 	}
 	
+	public static void loadImagesNormalized() throws IOException
+	{
+		ImageUtils.loadImages(trainImages, testImages, trainLabels, testLabels, Style.GREY);
+		normalize(MnistDatabase.trainImages);
+		normalize(MnistDatabase.testImages);
+	}
+	
 	public static void loadImagesCrop(int newImageSize) throws IOException
 	{
 		trainLabels.addAll(ImageUtils.readMinstLabels("/mnist/train-labels.idx1-ubyte"));
@@ -61,5 +68,11 @@ public class MnistDatabase
 			images.set(i, ImageUtils.scaleImage(images.get(i), scale));
 		}
 	}
-	
+	private static void normalize(List<Image> images)
+	{
+		for(int i=0;i<images.size();i++)
+		{
+			images.get(i).normalize();
+		}
+	}
 }
