@@ -51,7 +51,7 @@ public class SeparatedMLPerceptron {
 		
 	}
 
-	public int getClassForData(float[] data){
+	public int getClassForData(double[] data){
 		double max = -1*Double.MAX_VALUE;
 		int indexMax=-1;
 		for (int i = 0;i<mlPerceptrons.size();i++){

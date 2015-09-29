@@ -17,7 +17,7 @@ public class RunClassifyGBNeuron {
 		MnistDatabase.loadImages();
 //		ClassifyBNeuron bn = new ClassifyBNeuron(MnistDatabase.trainImages, MnistDatabase.trainLabels);
 //		System.out.println(bn.getRate(MnistDatabase.testImages, MnistDatabase.testLabels));
-		ClassifyGBNeuron bn = new ClassifyGBNeuron(MnistDatabase.trainImages.subList(0, 6000), MnistDatabase.trainLabels.subList(0, 6000));
-		System.out.println(bn.getRate(MnistDatabase.testImages.subList(0, 1000), MnistDatabase.testLabels.subList(0, 1000)));
+		ClassifyGBNeuron bn = new ClassifyGBNeuron(MnistDatabase.trainImages.subList(0, 60000), MnistDatabase.trainLabels.subList(0, 60000));
+		System.out.println(bn.getRate(MnistDatabase.testImages.subList(0, 10000), MnistDatabase.testLabels.subList(0, 10000)));
 	}
 }

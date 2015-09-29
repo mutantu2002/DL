@@ -10,13 +10,13 @@ import java.util.Set;
 public class MBPatternNeuron implements Comparable<MBPatternNeuron>{
 	public Set<Integer> indexes ;
 	public int imagePatternIndex = 0;
-	float[] pattern;
+	double[] pattern;
 	public int sumPositive=0;
 	
 	public MBPatternNeuron(int size, int imagePatternIndex, Set<Integer> indexes) {
 		this.imagePatternIndex = imagePatternIndex;
 		this.indexes = indexes;
-		pattern = new float[size];
+		pattern = new double[size];
 		int i=0;
 		for (Integer index : indexes) { 
 			pattern[i++] = MnistDatabase.trainImages.get(imagePatternIndex).data[index];
@@ -27,7 +27,7 @@ public class MBPatternNeuron implements Comparable<MBPatternNeuron>{
 	public Image generateImage(){
 		return new Image(pattern);
 	}
-	public boolean isSimilar(float[] input){
+	public boolean isSimilar(double[] input){
 		double count = countSimilar(input);
 		//System.out.println(count);
 		if (count/Globals.MAX_PIXEL_VALUE>=Globals.SIMILARITY) return true;
@@ -43,7 +43,7 @@ public class MBPatternNeuron implements Comparable<MBPatternNeuron>{
 //		}
 //		return count/pattern.length*Globals.MAX_PIXEL_VALUE;
 //	}
-	public double countSimilar(float[] input) {
+	public double countSimilar(double[] input) {
 		double count=0;
 		int i=0;
 		for (Integer index : indexes) {

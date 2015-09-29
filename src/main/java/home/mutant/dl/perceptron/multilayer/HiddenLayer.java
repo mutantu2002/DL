@@ -8,15 +8,17 @@ public class HiddenLayer extends Layer{
 		super(sizeIn, sizeOut, InitType.RANDOM);
 	}
 	
-	public void forward(float[] data){
+	public void forward(double[] data){
 		super.forward(data);
 		for (int i = 0; i < activations.length; i++) {
-			if(activations[i]<0)activations[i]/=50;
+			//if(activations[i]<0)activations[i]=0;
+			if(activations[i]<0)activations[i]/=5;
 			//if(activations[i]>1)activations[i]=1;
 			
 		}
 		//normalizeActivations();
 	}
+	
 //	public void normalizeActivations(){
 //		double max = -1*Double.MAX_VALUE;
 //		double min = Double.MAX_VALUE;
@@ -43,12 +45,12 @@ public class HiddenLayer extends Layer{
 		}
 	}
 	
-	public void backward(double[] errors, float[] data){
+	public void backward(double[] errors, double[] data){
 		for (int i = 0; i < perceptrons.size(); i++) {
 			if (errors[i]!=0) 
 			{
 				if (activations[i]>0)perceptrons.get(i).modifyWeights(data, errors[i]);
-				else perceptrons.get(i).modifyWeights(data, errors[i]/50);
+				else perceptrons.get(i).modifyWeights(data, errors[i]/5);
 			}
 		}
 	}

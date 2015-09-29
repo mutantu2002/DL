@@ -22,13 +22,13 @@ public class GBNeuron {
 		}
 	}
 	public void trainImage(Image image){
-		float[] pixels = image.data;
+		double[] pixels = image.data;
 		for (int i = 0; i < pixels.length; i++) {
 			synapses.get(i).addTarget(pixels[i]);
 		}
 	}
 	public void trainImage(Image image, int weight){
-		float[] pixels = image.data;
+		double[] pixels = image.data;
 		for (int i = 0; i < pixels.length; i++) {
 			synapses.get(i).addTarget(pixels[i]);
 		}
@@ -53,7 +53,7 @@ public class GBNeuron {
 	}
 	public double getPosterior(Image image){
 		double posterior = 0;
-		float[] pixels = image.data;
+		double[] pixels = image.data;
 		for (int i = 0; i < pixels.length; i++) {
 			posterior+=synapses.get(i).getPosterior(pixels[i]);
 		}
@@ -83,7 +83,7 @@ public class GBNeuron {
 		return false;
 	}
 	public Image generateImage(){
-		float[] pixels=new float[synapses.size()];
+		double[] pixels=new double[synapses.size()];
 		for (int i = 0; i < pixels.length; i++) {
 			pixels[i] =  (float) (synapses.get(i).mean);
 		}

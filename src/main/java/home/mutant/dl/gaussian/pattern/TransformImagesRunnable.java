@@ -26,7 +26,7 @@ public class TransformImagesRunnable implements Runnable{
 	@Override
 	public void run() {
 		for (int i=0;i<images.size();i++) {
-			float[] pixels = new float[neurons.size()];
+			double[] pixels = new double[neurons.size()];
 			for (int j = 0; j < neurons.size(); j++) {
 				int countSimilar = (int) neurons.get(j).countSimilar(images.get(i).data);
 				pixels[j] = countSimilar>=Globals.MAX_PIXEL_VALUE*Globals.SIMILARITY?countSimilar:0;

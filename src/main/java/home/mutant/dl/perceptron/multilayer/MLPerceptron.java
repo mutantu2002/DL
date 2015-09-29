@@ -86,7 +86,7 @@ public class MLPerceptron implements Runnable{
 		System.out.println((double)count/total);
 
 	}
-	public double getActivation(float[] data){
+	public double getActivation(double[] data){
 		layer.forward(data);
 		return perceptron.calculateActivation(layer.activations);
 	}

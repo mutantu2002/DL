@@ -72,7 +72,7 @@ public class MBPatternColumn implements Runnable, Comparable<MBPatternColumn>{
 		}
 		neurons.add(new MBPatternNeuron(neuronSize, indexImage, indexes));
 	}
-	public int getMaxSimilar(float[] pixels)
+	public int getMaxSimilar(double[] pixels)
 	{
 		int max=-1;
 		int indexMax=-1;

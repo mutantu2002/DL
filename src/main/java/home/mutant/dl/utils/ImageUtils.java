@@ -97,7 +97,7 @@ public class ImageUtils
 		List<Image> images = new ArrayList<Image>();
 		for (byte[] bs : bytes) 
 		{
-			float[] pixels = new float[bs.length];
+			double[] pixels = new double[bs.length];
 			for (int i = 0; i < bs.length; i++) {
 				pixels[i]= bs[i];
 				if (pixels[i]<0)pixels[i]+=256;
@@ -199,19 +199,56 @@ public class ImageUtils
 		return newImages;
 	}
 	
-	public static List<byte[]> divideImage(byte[] image, int newX, int newY, int actualX, int actualY)
+	public static List<double[]> divideImage(double[] image, int newX, int newY, int actualX, int actualY)
 	{
 		return divideImage(image, newX, newY, actualX, actualY, newX, newY);
 	}
 	
-	public static List<byte[]> divideImage(byte[] image, int newX, int newY, int actualX, int actualY, int stepX, int stepY)
+	public static List<double[]> divideSquareImage(double[] image, int newDim, int step)
 	{
-		List<byte[]> dividedImages = new ArrayList<byte[]>();
+		int actualX = (int) Math.sqrt(image.length);
+		return divideImage(image, newDim, newDim, actualX, actualX, step, step);
+	}
+	public static List<double[]> divideSquareImage(double[] image, int newDim)
+	{
+		int actualX = (int) Math.sqrt(image.length);
+		return divideImage(image, newDim, newDim, actualX, actualX, 1, 1);
+	}
+	
+	public static double[] divideSquareImageUnidimensional(double[] image, int newDim)
+	{
+		int actualX = (int) Math.sqrt(image.length);
+		return divideImageUnidimensional(image, newDim, newDim, actualX, actualX, 1, 1);
+	}
+	
+	public static double[] divideImageUnidimensional(double[] image, int newX, int newY, int actualX, int actualY, int stepX, int stepY)
+	{
+		double[] dividedImages = new double[newX*newY*((actualY-newY+1)/stepY)*((actualX-newX+1)/stepX)];
+		int offsetImage = 0;
 		for (int y=0; y<=actualY-newY; y+=stepY)
 		{
 			for (int x=0; x<=actualX-newX; x+=stepX)
 			{
-				byte[] newImage = new byte[newX*newY];
+				for (int imageY = y; imageY<y+newY; imageY++)
+				{
+					for (int imageX = x; imageX<x+newX; imageX++)
+					{
+						dividedImages[offsetImage++] = image[imageY*actualX+imageX];
+					}
+				}
+			}		
+		}
+		return dividedImages;
+	}
+	
+	public static List<double[]> divideImage(double[] image, int newX, int newY, int actualX, int actualY, int stepX, int stepY)
+	{
+		List<double[]> dividedImages = new ArrayList<double[]>();
+		for (int y=0; y<=actualY-newY; y+=stepY)
+		{
+			for (int x=0; x<=actualX-newX; x+=stepX)
+			{
+				double[] newImage = new double[newX*newY];
 				int offsetImage = 0;
 				for (int imageY = y; imageY<y+newY; imageY++)
 				{
@@ -272,6 +309,30 @@ public class ImageUtils
 			testImages.addAll(ImageUtils.readMnistAsImage("/mnist/t10k-images.idx3-ubyte"));			
 		}
 	}
+	
+	public static Image blurImage(Image image)
+	{
+		Image dest = new Image(image.imageX, image.imageY);
+		for (int x=1;x<image.imageX-1;x++)
+		{
+			for (int y=1;y<image.imageY-1;y++)
+			{
+				double newPixel=0;
+				for(int xo=-1;xo<2;xo++)
+				{
+					for(int yo=-1;yo<2;yo++)
+					{
+						newPixel+=image.getPixel(x+xo, y+yo);
+					}
+				}
+				dest.setPixel(x,y,(float) newPixel/9);
+			}
+		}
+
+		return dest;
+		
+	}
+	
 	public static Image gradientImage(Image image)
 	{
 		Image dest = new Image(image.imageX, image.imageY);
@@ -279,17 +340,17 @@ public class ImageUtils
 		{
 			for (int y=1;y<image.imageY-1;y++)
 			{
-				float y1 = image.getPixel(x, y-1);
+				double y1 = image.getPixel(x, y-1);
 				y1-= image.getPixel(x, y+1);
-				float x1 = image.getPixel(x-1, y);
+				double x1 = image.getPixel(x-1, y);
 				x1-= image.getPixel(x+1, y);
 				dest.setPixel(x,y,(float) Math.sqrt((y1*y1+x1*x1)/2.));
 			}
 		}
 		for (int x=1;x<image.imageX-1;x++)
 		{
-			float y1 = -1*image.getPixel(x, 1);
-			float x1 = image.getPixel(x-1, 0);
+			double y1 = -1*image.getPixel(x, 1);
+			double x1 = image.getPixel(x-1, 0);
 			x1-= image.getPixel(x+1, 0);
 			dest.setPixel(x,0,(float)Math.sqrt((y1*y1+x1*x1)/2.));
 			
@@ -301,8 +362,8 @@ public class ImageUtils
 		
 		for (int y=1;y<image.imageY-1;y++)
 		{
-			float y1 = -1*image.getPixel(1, y);
-			float x1 = image.getPixel(0,y-1);
+			double y1 = -1*image.getPixel(1, y);
+			double x1 = image.getPixel(0,y-1);
 			x1-= image.getPixel(0,y+1);
 			dest.setPixel(0,y,(float)Math.sqrt((y1*y1+x1*x1)/2.));
 			
@@ -311,8 +372,8 @@ public class ImageUtils
 			x1-= image.getPixel(image.imageX-1, y+1);
 			dest.setPixel(image.imageX-1,y,(byte)Math.sqrt((y1*y1+x1*x1)/2.));
 		}
-		float x1=-1*image.getPixel(0,1);
-		float y1=-1*image.getPixel(1,0);
+		double x1=-1*image.getPixel(0,1);
+		double y1=-1*image.getPixel(1,0);
 		dest.setPixel(0,0,(float)Math.sqrt((y1*y1+x1*x1)/2.));
 		
 		x1=image.getPixel(image.imageX-2,0);
@@ -337,7 +398,7 @@ public class ImageUtils
 		{
 			for (int x = 0; x < originalImage.getWidth(); x++) 
 			{
-				float pixel = image.getPixel(x, y);
+				float pixel = (float)image.getPixel(x, y);
 				pixel/=256;
 				originalImage.setRGB(x, y, new Color(pixel, pixel, pixel).getRGB());
 			}

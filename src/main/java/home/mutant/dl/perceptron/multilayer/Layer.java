@@ -23,13 +23,6 @@ public class Layer {
 		errors = new double [sizeIn];
 	}
 	
-	public void forward(float[] data){
-		for (int i = 0; i < perceptrons.size(); i++) {
-			activations[i] = perceptrons.get(i).calculateActivation(data);
-			//activations[i]=activations[i]>0?255:0;
-		}
-	}
-	
 	public void forward(double[] data){
 		for (int i = 0; i < perceptrons.size(); i++) {
 			activations[i] = perceptrons.get(i).calculateActivation(data);

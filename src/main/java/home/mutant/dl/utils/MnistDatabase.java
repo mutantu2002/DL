@@ -48,6 +48,21 @@ public class MnistDatabase
 		replaceImagesWithScaled(testImages, scale);
 	}
 	
+	public static void loadImagesBlured() throws IOException
+	{
+		MnistDatabase.loadImages();
+		replaceImagesWithBlured(trainImages);
+		replaceImagesWithBlured(testImages);
+	}
+	
+	private static void replaceImagesWithBlured(List<Image> images)
+	{
+		for(int i=0;i<images.size();i++)
+		{
+			images.set(i, ImageUtils.blurImage(images.get(i)));
+		}
+	}
+	
 	public static void loadImagesGradient() throws IOException
 	{
 		MnistDatabase.loadImages();

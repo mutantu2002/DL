@@ -5,23 +5,23 @@ import java.awt.image.BufferedImage;
 public class Image 
 {
 	public int imageX,imageY;
-	public float[] data = null ;
+	public double[] data = null ;
 
 	
-	public Image(float[] data, int x, int y)
+	public Image(double[] data, int x, int y)
 	{
 		this.imageX=x;
 		this.imageY=y;
 		this.data = data;
 	}
-	public Image(float[] data)
+	public Image(double[] data)
 	{
 		this(data, (int)Math.sqrt(data.length), (int)Math.sqrt(data.length));
 	}
 
 	public Image(int x, int y)
 	{
-		this.data = new float[x*y];
+		this.data = new double[x*y];
 		this.imageX = x;
 		this.imageY = y;
 	}
@@ -51,7 +51,7 @@ public class Image
 	{
 		this.imageX = bs.length;
 		this.imageY = bs[0].length;
-		this.data = new float[imageX*imageY];
+		this.data = new double[imageX*imageY];
 		int offset=0;
 		for (int x=0;x<imageX;x++) 
 		{
@@ -64,11 +64,11 @@ public class Image
 		}
 	}
 
-	public void setPixel(int setX, int setY, float value)
+	public void setPixel(int setX, int setY, double value)
 	{
 		data[setY*imageX+setX] = value;
 	}
-	public float getPixel(int getX, int getY)
+	public double getPixel(int getX, int getY)
 	{
 		return data[getY*imageX+getX];
 	}

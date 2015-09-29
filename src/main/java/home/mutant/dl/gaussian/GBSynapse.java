@@ -24,13 +24,13 @@ public class GBSynapse {
 		for (int i=0;i<0;i++)
 			addTarget((float) (Math.random()*255));
 	}
-	public void addTarget(float pixel, int weight){
+	public void addTarget(double pixel, int weight){
 		sum+=pixel*weight;
 		sumSquares+=weight*pixel*pixel;
 		noInstances+=weight;
 		
 	}
-	public void addTarget(float pixel){
+	public void addTarget(double pixel){
 		addTarget(pixel,1);
 	}
 	
@@ -43,7 +43,7 @@ public class GBSynapse {
 		variance = sumSquares/noInstances-mean*mean;
 	}
 
-	public double getPosterior(float pixel){
+	public double getPosterior(double pixel){
 		calculateMeanDeviationBySum();
 		if(variance==0){
 			if(mean==pixel)return 0;

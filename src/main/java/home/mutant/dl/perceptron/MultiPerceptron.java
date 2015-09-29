@@ -11,14 +11,14 @@ public class MultiPerceptron {
 		}
 	}
 	
-	public void addClassData(float[] data, int noClass){
+	public void addClassData(double[] data, int noClass){
 		for (int i = 0;i<perceptrons.size();i++){
 			if (i==noClass) perceptrons.get(i).trainData(data, true);
 			else perceptrons.get(i).trainData(data, false);
 		}
 	}
 	
-	public int getClassForData(float[] data){
+	public int getClassForData(double[] data){
 		double max=-1*Double.MAX_VALUE;
 		int indexMax=-1;
 		for (int i = 0;i<perceptrons.size();i++){

@@ -5,9 +5,9 @@ import home.mutant.dl.models.Image;
 public class Perceptron {
 	public double[] coefficients;
 	public double learningRate = 0.0008;//Math.random()/100;
-	public double regularizationRate =  0.00001;
+	public double regularizationRate =  0.000001;
 	public double activation = 0;
-	public enum InitType{RANDOM, SINUS, GAUSS}
+	public enum InitType{RANDOM, SINUS, GAUSS, NO_INIT, CONSTANT}
 	public Perceptron(int size){
 		this(size, 1, InitType.RANDOM);
 	}
@@ -22,11 +22,19 @@ public class Perceptron {
 			case RANDOM: randomize(scale);break;
 			case SINUS: initSinus(scale);break;
 			case GAUSS: initGauss(scale);break;
+			case CONSTANT: initConstant(scale);break;
+			case NO_INIT: break;
 			default: randomize(scale);
 		}
 
 	}
 	
+	private void initConstant(double scale) {
+		for (int i = 0; i < coefficients.length; i++) {
+			coefficients[i] = scale;
+		}
+	}
+
 	private void randomize(double scale) {
 		for (int i = 0; i < coefficients.length; i++) {
 			coefficients[i] = scale - 2*Math.random()*scale;
@@ -105,7 +113,7 @@ public class Perceptron {
 		coefficients[coefficients.length-1]+=sign*learningRate-coefficients[coefficients.length-1]*regularizationRate;
 	}
 	
-	public void trainData(float[] data, boolean isClass){
+	public void trainData(double[] data, boolean isClass){
 		boolean isCorrect = output(data);
 		if (isCorrect!=isClass){
 			if(isClass)
@@ -143,8 +151,8 @@ public class Perceptron {
 	}
 
 	public void decreaseLearningRate() {
-		learningRate/=1.05;
-		regularizationRate/=1.05;
+		learningRate/=1.03;
+		regularizationRate/=1.03;
 	}
 
 	public void increaseLearningRate() {

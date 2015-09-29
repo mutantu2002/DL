@@ -13,38 +13,28 @@ public class Net2Layers {
 	public double[] targets;
 	
 	public static void main(String[] args) throws Exception {
-		new Net2Layers(784, 64,10).train();
+		new Net2Layers(784, 10,10).train();
 	}
 	
 	private void train() throws Exception {
 		MnistDatabase.loadImagesNormalized();
-
-		ResultFrame frame = new ResultFrame(1000, 200);
-
-		
-		for(int steps=0;steps<400;steps++)
+		ResultFrame frame = new ResultFrame(1000, 700);
+		for(int steps=0;steps<4000;steps++)
 		{
 			for (int i=0;i<60000;i++){
 				int j = (int) (Math.random()*60000);
 				step(MnistDatabase.trainImages.get(j), MnistDatabase.trainLabels.get(j));
+//				if (MnistDatabase.trainLabels.get(j)==0){
+//					System.out.println("error "+Arrays.toString(output.errors));
+//					System.out.println(hidden.activations[0]);
+//				}
 			}
-//			if (steps%10==9) {
-//				increaseLearningRate();
-//				System.out.println("Increase");
-//			}
-//			else 
 			decreaseLearningRate();
 			test();
 			List<Image> images = hidden.getImages();
 			frame.showImages(images);
 		}
 
-	}
-
-	private void increaseLearningRate() {
-		hidden.increaseLearningRate();
-		output.increaseLearningRate();
-		
 	}
 
 	private void decreaseLearningRate() {
@@ -76,8 +66,8 @@ public class Net2Layers {
 		hidden.forward(image.data);
 		Arrays.fill(targets, 0);
 		targets[label]=1;
-		output.trainData(hidden.activations, targets);
-		hidden.backward(output.errors, image.data);
+		if (output.trainData(hidden.activations, targets))
+			hidden.backward(output.errors, image.data);
 	}
 	
 	public int getMaxOutputIndex(Image image){

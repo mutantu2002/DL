@@ -12,13 +12,13 @@ public class VotingPerceptron {
 		}
 	}
 	
-	public void trainData(float[] data, boolean isClass){
+	public void trainData(double[] data, boolean isClass){
 		for (Perceptron p :voters){
 			p.trainData(data, isClass);
 		}
 	}
 	
-	public int noCorrectlyClassified(float[] data){
+	public int noCorrectlyClassified(double[] data){
 		int correct=0;
 		for (Perceptron p :voters){
 			if (p.output(data)) correct++;
@@ -26,7 +26,7 @@ public class VotingPerceptron {
 		return correct;
 	}
 	
-	public double getTotalActivation(float[] data){
+	public double getTotalActivation(double[] data){
 		double activation = 0;
 		for (Perceptron p :voters){
 			activation+=p.calculateActivation(data);
@@ -34,7 +34,7 @@ public class VotingPerceptron {
 		return activation;
 	}
 	
-	public boolean correctlyClassified(float[] data){
+	public boolean correctlyClassified(double[] data){
 		return noCorrectlyClassified(data)>voters.size()/2;
 	}
 
