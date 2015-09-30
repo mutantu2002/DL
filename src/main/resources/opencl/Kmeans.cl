@@ -48,11 +48,10 @@ __kernel void updateCenters(__global double *centers, __global double *images, _
 	}
 }
 
-__kernel void reduceCenters(__global double *centers,  __global double *updates)
+__kernel void reduceCenters(__global double *updates)
 {
 	int offsetCenter = get_global_id(0);
 	int indexWorkItem=0;
-	double sum;
 	double centerBuffer[IMAGE_SIZE+1];
 	int centerIndex;
 	for(centerIndex=0;centerIndex<IMAGE_SIZE+1;centerIndex++)
@@ -66,10 +65,25 @@ __kernel void reduceCenters(__global double *centers,  __global double *updates)
 			centerBuffer[centerIndex]=centerBuffer[centerIndex]+updates[(indexWorkItem*NO_CLUSTERS+offsetCenter)*(IMAGE_SIZE+1)+centerIndex];
 		}
 	}
-	if (centerBuffer[IMAGE_SIZE]>0){
+	if (centerBuffer[IMAGE_SIZE]>0)
+	{
 		for(centerIndex=0;centerIndex<IMAGE_SIZE;centerIndex++)
 		{
-			centers[offsetCenter*IMAGE_SIZE+centerIndex]=centerBuffer[centerIndex]/centerBuffer[IMAGE_SIZE];
+			updates[offsetCenter*(IMAGE_SIZE+1)+centerIndex]=centerBuffer[centerIndex]/centerBuffer[IMAGE_SIZE];
+		}
+	}
+}
+
+__kernel void mixCenters(__global double *centers,  __global double *updates)
+{
+	int offsetCenter = get_global_id(0);
+	int centerIndex;
+
+	if (offsetCenter>0 && offsetCenter<NO_CLUSTERS-1)
+	{
+		for(centerIndex=0;centerIndex<IMAGE_SIZE;centerIndex++)
+		{
+			centers[offsetCenter*IMAGE_SIZE+centerIndex]=(updates[offsetCenter*(IMAGE_SIZE+1)+centerIndex]+updates[(offsetCenter+1)*(IMAGE_SIZE+1)+centerIndex]+updates[(offsetCenter-1)*(IMAGE_SIZE+1)+centerIndex])/3;
 		}
 	}
 }

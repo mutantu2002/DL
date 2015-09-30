@@ -17,7 +17,7 @@ public class KMeansOpenCl {
 	public static final int NO_CLUSTERS = 256;
 	public static final int IMAGES_PER_WORK_ITEM = 625;
 	public static final int WORK_ITEMS = 20000;
-	public static final int NO_ITERATIONS = 5;
+	public static final int NO_ITERATIONS = 60;
 	
 	public static void main(String[] args) throws Exception {
 		MnistDatabase.loadImages();
@@ -44,7 +44,11 @@ public class KMeansOpenCl {
 		updateCenters.setArguments(memClusters,memImages,memUpdates);
 		
 		Kernel reduceCenters = new Kernel(program, "reduceCenters");
-		reduceCenters.setArguments(memClusters,memUpdates);
+		reduceCenters.setArguments(memUpdates);
+		
+		Kernel mixCenters = new Kernel(program, "mixCenters");
+		mixCenters.setArguments(memClusters, memUpdates);
+		
 		long tTotal=0;
 
 		for (int iteration=0;iteration<NO_ITERATIONS;iteration++){
@@ -62,7 +66,8 @@ public class KMeansOpenCl {
 			}
 			reduceCenters.run(NO_CLUSTERS, 256);
 			program.finish();
-
+			mixCenters.run(NO_CLUSTERS, 256);
+			program.finish();
 			System.out.println("Iteration "+iteration);
 		}
 		memUpdates.copyDtoH();
@@ -82,12 +87,16 @@ public class KMeansOpenCl {
 			System.arraycopy(memClusters.getSrc(), i*DIM_FILTER*DIM_FILTER, image.data, 0, DIM_FILTER*DIM_FILTER);
 			images.add(image);
 		}
+		
 		ResultFrame frame = new ResultFrame(600, 600);
 		frame.showImages(images);
+		
 		memClusters.release();
 		memImages.release();
 		memUpdates.release();
 		updateCenters.release();
+		reduceCenters.release();
+		mixCenters.release();
 		program.release();
 	}
 }
