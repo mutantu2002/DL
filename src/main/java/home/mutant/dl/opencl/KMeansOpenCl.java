@@ -14,9 +14,10 @@ import home.mutant.dl.utils.MnistDatabase;
 
 public class KMeansOpenCl {
 	public static final int DIM_FILTER = 4;
-	public static final int NO_CLUSTERS = 100;
+	public static final int NO_CLUSTERS = 256;
 	public static final int IMAGES_PER_WORK_ITEM = 625;
-	public static final int WORK_ITEMS = 1024;
+	public static final int WORK_ITEMS = 20000;
+	public static final int NO_ITERATIONS = 5;
 	
 	public static void main(String[] args) throws Exception {
 		MnistDatabase.loadImages();
@@ -44,20 +45,24 @@ public class KMeansOpenCl {
 		
 		Kernel reduceCenters = new Kernel(program, "reduceCenters");
 		reduceCenters.setArguments(memClusters,memUpdates);
-		
-		for (int iteration=0;iteration<10;iteration++){
-			for (int batch=0 ;batch<10;batch++){
-				for (int i=0;i<WORK_ITEMS;i++){
-					System.arraycopy(ImageUtils.divideSquareImageUnidimensional(MnistDatabase.trainImages.get(batch*WORK_ITEMS+i).data, DIM_FILTER), 0, subImages, i*(DIM_FILTER*DIM_FILTER)*IMAGES_PER_WORK_ITEM, (DIM_FILTER*DIM_FILTER)*IMAGES_PER_WORK_ITEM);
-				}
-				memImages.copyHtoD();
-				updateCenters.run(WORK_ITEMS, 128);
-				program.finish();
-			}
-			reduceCenters.run(NO_CLUSTERS, 4);
-			program.finish();
+		long tTotal=0;
+
+		for (int iteration=0;iteration<NO_ITERATIONS;iteration++){
 			Arrays.fill(clustersUpdates, 0);
 			memUpdates.copyHtoD();
+			for (int batch=0 ;batch<60000/WORK_ITEMS;batch++){
+				for (int i=0;i<WORK_ITEMS;i++){
+					System.arraycopy(ImageUtils.divideSquareImageUnidimensional(MnistDatabase.trainImages.get(batch*WORK_ITEMS+i).data, DIM_FILTER), 0, subImages, i*(DIM_FILTER*DIM_FILTER)*625, (DIM_FILTER*DIM_FILTER)*625);
+				}
+				long t0 = System.currentTimeMillis();
+				memImages.copyHtoD();
+				updateCenters.run(WORK_ITEMS, 256);
+				program.finish();
+				tTotal+=System.currentTimeMillis()-t0;
+			}
+			reduceCenters.run(NO_CLUSTERS, 256);
+			program.finish();
+
 			System.out.println("Iteration "+iteration);
 		}
 		memUpdates.copyDtoH();
@@ -67,8 +72,9 @@ public class KMeansOpenCl {
 			if (memUpdates.getSrc()[i]==0)noZero++;
 			sum+=memUpdates.getSrc()[i];
 		}
-		System.out.println(noZero);
-		
+		System.out.println("Threaded Clusters not assigned "+noZero);
+		System.out.println("Total updates "+sum);
+		System.out.println("Time in kernel per iteration " + tTotal/1000./NO_ITERATIONS);
 		memClusters.copyDtoH();
 		List<Image> images = new ArrayList<Image>();
 		for (int i=0;i<NO_CLUSTERS;i++) {

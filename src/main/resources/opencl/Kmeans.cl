@@ -1,8 +1,8 @@
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
 #define IMAGE_SIZE  16
-#define NO_CLUSTERS  100
+#define NO_CLUSTERS  256
 #define IMAGES_PER_WORK_ITEM  625
-#define WORK_ITEMS 1024
+#define WORK_ITEMS 20000
 
 __kernel void updateCenters(__global double *centers, __global double *images, __global double *updates)
 {
@@ -11,7 +11,6 @@ __kernel void updateCenters(__global double *centers, __global double *images, _
 	int imagesOffset = gid*IMAGE_SIZE*IMAGES_PER_WORK_ITEM;
 	int updatesOffset = gid*(IMAGE_SIZE+1)*NO_CLUSTERS;
 
-	double centersBuffer[IMAGE_SIZE*NO_CLUSTERS];
 	int centersIndex=0;
 	int imageIndex=0;
 	
@@ -20,10 +19,8 @@ __kernel void updateCenters(__global double *centers, __global double *images, _
 	double weight;
 	double min;
 	int minCenterIndex;
-	for(centersIndex=0;centersIndex<IMAGE_SIZE*NO_CLUSTERS;centersIndex++)
-	{
-		centersBuffer[centersIndex]=centers[centersIndex];
-	}
+	double imageBuffer[IMAGE_SIZE];
+	
 	for(imageIndex=0;imageIndex<IMAGES_PER_WORK_ITEM;imageIndex++)
 	{
 		min=IMAGE_SIZE*1000000;
@@ -33,7 +30,8 @@ __kernel void updateCenters(__global double *centers, __global double *images, _
 			sum = 0;
 			for(index=0;index<IMAGE_SIZE;index++)
 			{
-				weight = centersBuffer[centersIndex*IMAGE_SIZE+index]-images[imagesOffset+imageIndex*IMAGE_SIZE+index];
+				imageBuffer[index]=images[imagesOffset+imageIndex*IMAGE_SIZE+index];
+				weight = centers[centersIndex*IMAGE_SIZE+index]-imageBuffer[index];
 				sum = sum+weight*weight;
 			}
 			if (sum<min)
@@ -44,7 +42,7 @@ __kernel void updateCenters(__global double *centers, __global double *images, _
 		}
 		for(index=0;index<IMAGE_SIZE;index++)
 		{
-			updates[updatesOffset+(IMAGE_SIZE+1)*minCenterIndex+index] = updates[updatesOffset+(IMAGE_SIZE+1)*minCenterIndex+index]+images[imagesOffset+imageIndex*IMAGE_SIZE+index];
+			updates[updatesOffset+(IMAGE_SIZE+1)*minCenterIndex+index] = updates[updatesOffset+(IMAGE_SIZE+1)*minCenterIndex+index]+imageBuffer[index];
 		}
 		updates[updatesOffset+(IMAGE_SIZE+1)*minCenterIndex+IMAGE_SIZE] = updates[updatesOffset+(IMAGE_SIZE+1)*minCenterIndex+IMAGE_SIZE]+1;
 	}
