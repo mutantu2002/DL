@@ -17,7 +17,7 @@ public class KMeansOpenCl {
 	public static final int NO_CLUSTERS = 256;
 	public static final int IMAGES_PER_WORK_ITEM = 625;
 	public static final int WORK_ITEMS = 20000;
-	public static final int NO_ITERATIONS = 60;
+	public static final int NO_ITERATIONS = 10;
 	
 	public static void main(String[] args) throws Exception {
 		MnistDatabase.loadImages();
@@ -50,14 +50,15 @@ public class KMeansOpenCl {
 		mixCenters.setArguments(memClusters, memUpdates);
 		
 		long tTotal=0;
-
+		for (int i=0;i<WORK_ITEMS;i++){
+			System.arraycopy(ImageUtils.divideSquareImageUnidimensional(MnistDatabase.trainImages.get(1*WORK_ITEMS+i).data, DIM_FILTER), 0, subImages, i*(DIM_FILTER*DIM_FILTER)*IMAGES_PER_WORK_ITEM, (DIM_FILTER*DIM_FILTER)*IMAGES_PER_WORK_ITEM);
+		}
+		
 		for (int iteration=0;iteration<NO_ITERATIONS;iteration++){
 			Arrays.fill(clustersUpdates, 0);
 			memUpdates.copyHtoD();
 			for (int batch=0 ;batch<60000/WORK_ITEMS;batch++){
-				for (int i=0;i<WORK_ITEMS;i++){
-					System.arraycopy(ImageUtils.divideSquareImageUnidimensional(MnistDatabase.trainImages.get(batch*WORK_ITEMS+i).data, DIM_FILTER), 0, subImages, i*(DIM_FILTER*DIM_FILTER)*625, (DIM_FILTER*DIM_FILTER)*625);
-				}
+
 				long t0 = System.currentTimeMillis();
 				memImages.copyHtoD();
 				updateCenters.run(WORK_ITEMS, 256);
