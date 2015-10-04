@@ -9,19 +9,18 @@ import home.mutant.dl.opencl.model.Kernel;
 import home.mutant.dl.opencl.model.Memory;
 import home.mutant.dl.opencl.model.Program;
 import home.mutant.dl.ui.ResultFrame;
-import home.mutant.dl.utils.ImageUtils;
 import home.mutant.dl.utils.MnistDatabase;
 
-public class KMeansOpenCl {
+public class SubImageKMeansOpenCl {
 	public static final int DIM_FILTER = 4;
 	public static final int NO_CLUSTERS = 256;
-	public static final int IMAGES_PER_WORK_ITEM = 625;
 	public static final int WORK_ITEMS = 20000;
+	public static final int DIM_IMAGE = 28;
 	public static final int NO_ITERATIONS = 10;
 	
 	public static void main(String[] args) throws Exception {
 		MnistDatabase.loadImages();
-		double[] subImages= new double[(DIM_FILTER*DIM_FILTER)*IMAGES_PER_WORK_ITEM*WORK_ITEMS];
+		double[] inputImages= new double[(DIM_IMAGE*DIM_IMAGE)*WORK_ITEMS];
 		
 		double[] clustersCenters = new double[DIM_FILTER*DIM_FILTER*NO_CLUSTERS];
 		for (int i = 0; i < clustersCenters.length; i++) {
@@ -35,7 +34,7 @@ public class KMeansOpenCl {
 		memClusters.addReadWrite(clustersCenters);
 		
 		Memory memImages = new Memory(program);
-		memImages.addReadOnly(subImages);
+		memImages.addReadOnly(inputImages);
 		
 		Memory memUpdates = new Memory(program);
 		memUpdates.addReadWrite(clustersUpdates);
@@ -57,7 +56,7 @@ public class KMeansOpenCl {
 			memUpdates.copyHtoD();
 			for (int batch=0 ;batch<60000/WORK_ITEMS;batch++){
 				for (int i=0;i<WORK_ITEMS;i++){
-					System.arraycopy(ImageUtils.divideSquareImageUnidimensional(MnistDatabase.trainImages.get(batch*WORK_ITEMS+i).data, DIM_FILTER), 0, subImages, i*(DIM_FILTER*DIM_FILTER)*IMAGES_PER_WORK_ITEM, (DIM_FILTER*DIM_FILTER)*IMAGES_PER_WORK_ITEM);
+					System.arraycopy(MnistDatabase.trainImages.get(batch*WORK_ITEMS+i).data, 0, inputImages, i*(DIM_IMAGE*DIM_IMAGE), DIM_IMAGE*DIM_IMAGE);
 				}
 				long t0 = System.currentTimeMillis();
 				memImages.copyHtoD();
@@ -82,15 +81,15 @@ public class KMeansOpenCl {
 		System.out.println("Total updates "+sum);
 		System.out.println("Time in kernel per iteration " + tTotal/1000./NO_ITERATIONS);
 		memClusters.copyDtoH();
-		List<Image> images = new ArrayList<Image>();
+		List<Image> imgClusters = new ArrayList<Image>();
 		for (int i=0;i<NO_CLUSTERS;i++) {
 			Image image = new Image(DIM_FILTER*DIM_FILTER);
 			System.arraycopy(memClusters.getSrc(), i*DIM_FILTER*DIM_FILTER, image.data, 0, DIM_FILTER*DIM_FILTER);
-			images.add(image);
+			imgClusters.add(image);
 		}
 		
 		ResultFrame frame = new ResultFrame(600, 600);
-		frame.showImages(images);
+		frame.showImages(imgClusters);
 		
 		memClusters.release();
 		memImages.release();
