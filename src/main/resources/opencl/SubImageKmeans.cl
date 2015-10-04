@@ -3,7 +3,8 @@
 #define FILTER_SIZE  16
 #define NO_CLUSTERS  256
 #define DIM_IMAGE  28
-#define WORK_ITEMS 20000
+#define IMAGE_SIZE  784
+#define WORK_ITEMS 10000
 
 __kernel void updateCenters(__global double *centers, __global double *images, __global double *updates)
 {
@@ -34,18 +35,17 @@ __kernel void updateCenters(__global double *centers, __global double *images, _
 			{
 				for(filterY=0;filterY<DIM_FILTER;filterY++)
 				{
-					imageBuffer[index++] = images[imagesOffset+(imageY+filterY)*DIM_IMAGE+(imageX+filterX);
+					imageBuffer[index++] = images[imagesOffset+(imageY+filterY)*DIM_IMAGE+(imageX+filterX)];
 				}
 			}
-			min=IMAGE_SIZE*1000000;
+			min=FILTER_SIZE*1000000;
 			minCenterIndex=0;
 			for(centersIndex=0;centersIndex<NO_CLUSTERS;centersIndex++)
 			{
 				sum = 0;
-				for(index=0;index<IMAGE_SIZE;index++)
+				for(index=0;index<FILTER_SIZE;index++)
 				{
-					imageBuffer[index]=images[imagesOffset+imageIndex*IMAGE_SIZE+index];
-					weight = centers[centersIndex*IMAGE_SIZE+index]-imageBuffer[index];
+					weight = centers[centersIndex*FILTER_SIZE+index]-imageBuffer[index];
 					sum = sum+weight*weight;
 				}
 				if (sum<min)
@@ -54,11 +54,11 @@ __kernel void updateCenters(__global double *centers, __global double *images, _
 					minCenterIndex = centersIndex;
 				}
 			}
-			for(index=0;index<IMAGE_SIZE;index++)
+			for(index=0;index<FILTER_SIZE;index++)
 			{
-				updates[updatesOffset+(IMAGE_SIZE+1)*minCenterIndex+index] = updates[updatesOffset+(IMAGE_SIZE+1)*minCenterIndex+index]+imageBuffer[index];
+				updates[updatesOffset+(FILTER_SIZE+1)*minCenterIndex+index] = updates[updatesOffset+(FILTER_SIZE+1)*minCenterIndex+index]+imageBuffer[index];
 			}
-			updates[updatesOffset+(IMAGE_SIZE+1)*minCenterIndex+IMAGE_SIZE] = updates[updatesOffset+(IMAGE_SIZE+1)*minCenterIndex+IMAGE_SIZE]+1;
+			updates[updatesOffset+(FILTER_SIZE+1)*minCenterIndex+FILTER_SIZE] = updates[updatesOffset+(FILTER_SIZE+1)*minCenterIndex+FILTER_SIZE]+1;
 		}
 	}
 }
@@ -67,24 +67,24 @@ __kernel void reduceCenters(__global double *updates)
 {
 	int offsetCenter = get_global_id(0);
 	int indexWorkItem=0;
-	double centerBuffer[IMAGE_SIZE+1];
+	double centerBuffer[FILTER_SIZE+1];
 	int centerIndex;
-	for(centerIndex=0;centerIndex<IMAGE_SIZE+1;centerIndex++)
+	for(centerIndex=0;centerIndex<FILTER_SIZE+1;centerIndex++)
 	{
 		centerBuffer[centerIndex]=0;
 	}
 	for(indexWorkItem=0;indexWorkItem<WORK_ITEMS;indexWorkItem++)
 	{
-		for(centerIndex=0;centerIndex<IMAGE_SIZE+1;centerIndex++)
+		for(centerIndex=0;centerIndex<FILTER_SIZE+1;centerIndex++)
 		{
-			centerBuffer[centerIndex]=centerBuffer[centerIndex]+updates[(indexWorkItem*NO_CLUSTERS+offsetCenter)*(IMAGE_SIZE+1)+centerIndex];
+			centerBuffer[centerIndex]=centerBuffer[centerIndex]+updates[(indexWorkItem*NO_CLUSTERS+offsetCenter)*(FILTER_SIZE+1)+centerIndex];
 		}
 	}
-	if (centerBuffer[IMAGE_SIZE]>0)
+	if (centerBuffer[FILTER_SIZE]>0)
 	{
-		for(centerIndex=0;centerIndex<IMAGE_SIZE;centerIndex++)
+		for(centerIndex=0;centerIndex<FILTER_SIZE;centerIndex++)
 		{
-			updates[offsetCenter*(IMAGE_SIZE+1)+centerIndex]=centerBuffer[centerIndex]/centerBuffer[IMAGE_SIZE];
+			updates[offsetCenter*(FILTER_SIZE+1)+centerIndex]=centerBuffer[centerIndex]/centerBuffer[FILTER_SIZE];
 		}
 	}
 }
@@ -96,9 +96,9 @@ __kernel void mixCenters(__global double *centers,  __global double *updates)
 
 	if (offsetCenter>0 && offsetCenter<NO_CLUSTERS-1)
 	{
-		for(centerIndex=0;centerIndex<IMAGE_SIZE;centerIndex++)
+		for(centerIndex=0;centerIndex<FILTER_SIZE;centerIndex++)
 		{
-			centers[offsetCenter*IMAGE_SIZE+centerIndex]=(updates[offsetCenter*(IMAGE_SIZE+1)+centerIndex]+updates[(offsetCenter+1)*(IMAGE_SIZE+1)+centerIndex]+updates[(offsetCenter-1)*(IMAGE_SIZE+1)+centerIndex])/3;
+			centers[offsetCenter*FILTER_SIZE+centerIndex]=(updates[offsetCenter*(FILTER_SIZE+1)+centerIndex]+updates[(offsetCenter+1)*(FILTER_SIZE+1)+centerIndex]+updates[(offsetCenter-1)*(FILTER_SIZE+1)+centerIndex])/3;
 		}
 	}
 }
