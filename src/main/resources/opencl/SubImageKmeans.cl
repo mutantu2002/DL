@@ -1,10 +1,13 @@
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-#define DIM_FILTER  4
-#define FILTER_SIZE  16
-#define NO_CLUSTERS  256
-#define DIM_IMAGE  28
-#define IMAGE_SIZE  784
+
+#define DIM_FILTER  7
 #define WORK_ITEMS 10000
+#define NO_CLUSTERS  256
+
+#define DIM_IMAGE  28
+#define IMAGE_SIZE  (DIM_IMAGE*DIM_IMAGE)
+#define FILTER_SIZE  (DIM_FILTER*DIM_FILTER)
+
 
 __kernel void updateCenters(__global double *centers, __global double *images, __global double *updates)
 {
@@ -24,8 +27,8 @@ __kernel void updateCenters(__global double *centers, __global double *images, _
 	int filterX;
 	int filterY;
 	
-	double imageBuffer[FILTER_SIZE];
-	
+	double subImageBuffer[FILTER_SIZE];
+
 	for(imageX=0;imageX<=DIM_IMAGE-DIM_FILTER;imageX++)
 	{
 		for(imageY=0;imageY<=DIM_IMAGE-DIM_FILTER;imageY++)
@@ -35,7 +38,7 @@ __kernel void updateCenters(__global double *centers, __global double *images, _
 			{
 				for(filterY=0;filterY<DIM_FILTER;filterY++)
 				{
-					imageBuffer[index++] = images[imagesOffset+(imageY+filterY)*DIM_IMAGE+(imageX+filterX)];
+					subImageBuffer[index++] = images[imagesOffset+(imageY+filterY)+(imageX+filterX)*DIM_IMAGE];
 				}
 			}
 			min=FILTER_SIZE*1000000;
@@ -45,7 +48,7 @@ __kernel void updateCenters(__global double *centers, __global double *images, _
 				sum = 0;
 				for(index=0;index<FILTER_SIZE;index++)
 				{
-					weight = centers[centersIndex*FILTER_SIZE+index]-imageBuffer[index];
+					weight = centers[centersIndex*FILTER_SIZE+index]-subImageBuffer[index];
 					sum = sum+weight*weight;
 				}
 				if (sum<min)
@@ -56,7 +59,7 @@ __kernel void updateCenters(__global double *centers, __global double *images, _
 			}
 			for(index=0;index<FILTER_SIZE;index++)
 			{
-				updates[updatesOffset+(FILTER_SIZE+1)*minCenterIndex+index] = updates[updatesOffset+(FILTER_SIZE+1)*minCenterIndex+index]+imageBuffer[index];
+				updates[updatesOffset+(FILTER_SIZE+1)*minCenterIndex+index] = updates[updatesOffset+(FILTER_SIZE+1)*minCenterIndex+index]+subImageBuffer[index];
 			}
 			updates[updatesOffset+(FILTER_SIZE+1)*minCenterIndex+FILTER_SIZE] = updates[updatesOffset+(FILTER_SIZE+1)*minCenterIndex+FILTER_SIZE]+1;
 		}
@@ -93,12 +96,24 @@ __kernel void mixCenters(__global double *centers,  __global double *updates)
 {
 	int offsetCenter = get_global_id(0);
 	int centerIndex;
+	double noMean=1;
+	double influence=0;
 
-	if (offsetCenter>0 && offsetCenter<NO_CLUSTERS-1)
+	for(centerIndex=0;centerIndex<FILTER_SIZE;centerIndex++)
 	{
-		for(centerIndex=0;centerIndex<FILTER_SIZE;centerIndex++)
+		noMean=1;
+		influence=0;
+		if (offsetCenter>0)
 		{
-			centers[offsetCenter*FILTER_SIZE+centerIndex]=(updates[offsetCenter*(FILTER_SIZE+1)+centerIndex]+updates[(offsetCenter+1)*(FILTER_SIZE+1)+centerIndex]+updates[(offsetCenter-1)*(FILTER_SIZE+1)+centerIndex])/3;
+			influence = influence + updates[(offsetCenter-1)*(FILTER_SIZE+1)+centerIndex];
+			noMean++;
 		}
+		if (offsetCenter<NO_CLUSTERS-1)
+		{
+			influence = influence + updates[(offsetCenter+1)*(FILTER_SIZE+1)+centerIndex];
+			noMean++;
+		}
+		centers[offsetCenter*FILTER_SIZE+centerIndex]=(updates[offsetCenter*(FILTER_SIZE+1)+centerIndex]+influence)/noMean;
+		//centers[offsetCenter*FILTER_SIZE+centerIndex]=updates[offsetCenter*(FILTER_SIZE+1)+centerIndex];
 	}
 }

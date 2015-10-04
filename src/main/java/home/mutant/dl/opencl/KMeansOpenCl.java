@@ -67,8 +67,8 @@ public class KMeansOpenCl {
 			}
 			reduceCenters.run(NO_CLUSTERS, 256);
 			program.finish();
-//			mixCenters.run(NO_CLUSTERS, 256);
-//			program.finish();
+			mixCenters.run(NO_CLUSTERS, 256);
+			program.finish();
 			System.out.println("Iteration "+iteration);
 		}
 		memUpdates.copyDtoH();
