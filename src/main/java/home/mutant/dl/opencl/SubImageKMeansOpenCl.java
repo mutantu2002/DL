@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import home.mutant.dl.models.Image;
+import home.mutant.dl.models.ImageDouble;
 import home.mutant.dl.opencl.model.Kernel;
 import home.mutant.dl.opencl.model.Memory;
 import home.mutant.dl.opencl.model.Program;
@@ -56,7 +57,7 @@ public class SubImageKMeansOpenCl {
 			memUpdates.copyHtoD();
 			for (int batch=0 ;batch<60000/WORK_ITEMS;batch++){
 				for (int i=0;i<WORK_ITEMS;i++){
-					System.arraycopy(MnistDatabase.trainImages.get(batch*WORK_ITEMS+i).data, 0, inputImages, i*(DIM_IMAGE*DIM_IMAGE), DIM_IMAGE*DIM_IMAGE);
+					System.arraycopy(MnistDatabase.trainImages.get(batch*WORK_ITEMS+i).getDataDouble(), 0, inputImages, i*(DIM_IMAGE*DIM_IMAGE), DIM_IMAGE*DIM_IMAGE);
 				}
 				long t0 = System.currentTimeMillis();
 				memImages.copyHtoD();
@@ -83,8 +84,8 @@ public class SubImageKMeansOpenCl {
 		memClusters.copyDtoH();
 		List<Image> imgClusters = new ArrayList<Image>();
 		for (int i=0;i<NO_CLUSTERS;i++) {
-			Image image = new Image(DIM_FILTER*DIM_FILTER);
-			System.arraycopy(memClusters.getSrc(), i*DIM_FILTER*DIM_FILTER, image.data, 0, DIM_FILTER*DIM_FILTER);
+			Image image = new ImageDouble(DIM_FILTER*DIM_FILTER);
+			System.arraycopy(memClusters.getSrc(), i*DIM_FILTER*DIM_FILTER, image.getDataDouble(), 0, DIM_FILTER*DIM_FILTER);
 			imgClusters.add(image);
 		}
 		
