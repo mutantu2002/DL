@@ -4,6 +4,7 @@ import home.mutant.dl.gaussian.GBNeuron;
 import home.mutant.dl.gaussian.Globals;
 import home.mutant.dl.gaussian.Globals.FILL_TYPE;
 import home.mutant.dl.models.Image;
+import home.mutant.dl.models.ImageDouble;
 import home.mutant.dl.ui.ResultFrame;
 import home.mutant.dl.utils.MnistDatabase;
 
@@ -63,18 +64,18 @@ public class MLRunGaussianMBPatternNet {
 
 	public static void replaceImage(List<MBPatternNeuron> neurons, int indexImage, List<Image> images){
 		double[] newImage = new double[neurons.size()];
-		double[] pixels = images.get(indexImage).data;
+		double[] pixels = images.get(indexImage).getDataDouble();
 		for (int j = 0; j < neurons.size(); j++) {
 			int countSimilar = (int) neurons.get(j).countSimilar(pixels);
 			newImage[j] = (byte) (countSimilar>100?countSimilar:0);
 		}
 		//images.set(indexImage, ImageUtils.scaleImage(new Image(newImage),0.5));
-		images.set(indexImage, new Image(newImage));
+		images.set(indexImage, new ImageDouble(newImage));
 	}
 	public static void main2(String[] args) throws IOException {
 		MnistDatabase.loadImages();
-		MBPatternNet subBest = new MBPatternNet(0, Globals.SUBIMG_SIZE, MnistDatabase.trainImages.get(0).data.length,Globals.NO_TRAIN);
-		MBPatternNet theNet = new MBPatternNet(0, Globals.SUBIMG_SIZE, MnistDatabase.trainImages.get(0).data.length,Globals.NO_TRAIN);
+		MBPatternNet subBest = new MBPatternNet(0, Globals.SUBIMG_SIZE, MnistDatabase.trainImages.get(0).getDataDouble().length,Globals.NO_TRAIN);
+		MBPatternNet theNet = new MBPatternNet(0, Globals.SUBIMG_SIZE, MnistDatabase.trainImages.get(0).getDataDouble().length,Globals.NO_TRAIN);
 		for (int j=0;j<5;j++){
 			double max=0;
 			for (int i=0;i<50;i++)
@@ -99,7 +100,7 @@ public class MLRunGaussianMBPatternNet {
 	
 	public static void main5(String[] args) throws IOException {
 		MnistDatabase.loadImages();
-		MBPatternNet theNet = new MBPatternNet(0, Globals.SUBIMG_SIZE, MnistDatabase.trainImages.get(0).data.length,Globals.NO_TRAIN);
+		MBPatternNet theNet = new MBPatternNet(0, Globals.SUBIMG_SIZE, MnistDatabase.trainImages.get(0).getDataDouble().length,Globals.NO_TRAIN);
 		MBPatternNet net  = train();
 		test(net);
 		int size = net.columns.size();
@@ -162,7 +163,7 @@ public class MLRunGaussianMBPatternNet {
 	
 	public static void main4(String[] args) throws IOException {
 		MnistDatabase.loadImages();
-		MBPatternNet theNet = new MBPatternNet(0, Globals.SUBIMG_SIZE, MnistDatabase.trainImages.get(0).data.length,Globals.NO_TRAIN);
+		MBPatternNet theNet = new MBPatternNet(0, Globals.SUBIMG_SIZE, MnistDatabase.trainImages.get(0).getDataDouble().length,Globals.NO_TRAIN);
 		MBPatternNet net  = train();
 		test(net);
 		Collections.sort(net.columns, Collections.reverseOrder());
@@ -178,7 +179,7 @@ public class MLRunGaussianMBPatternNet {
 		}
 	}
 	private static MBPatternNet train() {
-		MBPatternNet net = new MBPatternNet(Globals.NO_COLUMNS, Globals.SUBIMG_SIZE, MnistDatabase.trainImages.get(0).data.length,Globals.NO_TRAIN);
+		MBPatternNet net = new MBPatternNet(Globals.NO_COLUMNS, Globals.SUBIMG_SIZE, MnistDatabase.trainImages.get(0).getDataDouble().length,Globals.NO_TRAIN);
 		net.trainImages();
 		return net;
 	}
@@ -199,7 +200,7 @@ public class MLRunGaussianMBPatternNet {
 		//MBPatternNeuron.similarityRate = 0.75;
 		for (int i=0;i<Globals.NO_TRAIN;i++)
 		{
-			double[] pixels = MnistDatabase.trainImages.get(i).data;
+			double[] pixels = MnistDatabase.trainImages.get(i).getDataDouble();
 			for (int j = 0; j < allNeurons.size(); j++) {
 				int countSimilar = (int) allNeurons.get(j).countSimilar(pixels);
 				input[j] = countSimilar>=Globals.SUBIMG_SIZE*Globals.SIMILARITY?countSimilar:0;
@@ -218,7 +219,7 @@ public class MLRunGaussianMBPatternNet {
 		int count=0;
 		for (int i=0;i<Globals.NO_TEST;i++)
 		{
-			double[] pixels = MnistDatabase.testImages.get(i).data;
+			double[] pixels = MnistDatabase.testImages.get(i).getDataDouble();
 			for (int j = 0; j < allNeurons.size(); j++) {
 				int countSimilar = (int) allNeurons.get(j).countSimilar(pixels);
 				input[j] = countSimilar>=Globals.SUBIMG_SIZE*Globals.SIMILARITY?countSimilar:0;
@@ -243,7 +244,7 @@ public class MLRunGaussianMBPatternNet {
 		//MBPatternNeuron.similarityRate = 0.75;
 		for (int i=0;i<Globals.NO_TRAIN;i++)
 		{
-			double[] pixels = MnistDatabase.trainImages.get(i).data;
+			double[] pixels = MnistDatabase.trainImages.get(i).getDataDouble();
 			for (int j = 0; j < allNeurons.size(); j++) {
 				int countSimilar = (int) allNeurons.get(j).countSimilar(pixels);
 				input[j] = countSimilar>=Globals.SUBIMG_SIZE*Globals.SIMILARITY?countSimilar:0;
@@ -262,7 +263,7 @@ public class MLRunGaussianMBPatternNet {
 		int count=0;
 		for (int i=0;i<Globals.NO_TEST;i++)
 		{
-			double[] pixels = MnistDatabase.testImages.get(i).data;
+			double[] pixels = MnistDatabase.testImages.get(i).getDataDouble();
 			for (int j = 0; j < allNeurons.size(); j++) {
 				int countSimilar = (int) allNeurons.get(j).countSimilar(pixels);
 				input[j] = countSimilar>=Globals.SUBIMG_SIZE*Globals.SIMILARITY?countSimilar:0;

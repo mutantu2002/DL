@@ -19,7 +19,7 @@ import java.util.List;
 public class ClassifyGBColumn {
 	List<GBColumn> columns = new ArrayList<GBColumn>();
 	public ClassifyGBColumn(List<Image> images, List<Integer> labels){
-		int neuronSize = images.get(0).data.length;
+		int neuronSize = images.get(0).getDataDouble().length;
 		for (int i = 0; i < 10; i++) {
 			columns.add(new GBColumn(11, neuronSize));
 		}

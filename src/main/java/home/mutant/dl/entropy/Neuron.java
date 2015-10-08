@@ -1,6 +1,7 @@
 package home.mutant.dl.entropy;
 
 import home.mutant.dl.models.Image;
+import home.mutant.dl.models.ImageDouble;
 
 public class Neuron {
 	public double[] weights;
@@ -50,7 +51,7 @@ public class Neuron {
 	}
 	
 	public Image getImage(){
-		Image image = new Image(weights.length-1);
+		Image image = new ImageDouble(weights.length-1);
 		double max = -1*Double.MAX_VALUE;
 		double min = Double.MAX_VALUE;
 		for (int i = 0; i < weights.length-1; i++) {
@@ -59,7 +60,7 @@ public class Neuron {
 		}
 		max=255/(max-min);
 		for (int i = 0; i < weights.length-1; i++) {
-			image.data[i]=(float) ((weights[i]-min)*max);
+			image.getDataDouble()[i]=(float) ((weights[i]-min)*max);
 		}
 		return image;
 	}

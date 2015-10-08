@@ -9,9 +9,9 @@ public class RunVotingPerceptron {
 		VotingPerceptron p = new VotingPerceptron(110,28*28);
 		for (int i=0;i<60000;i++){
 			if(MnistDatabase.trainLabels.get(i)==5){
-				p.trainData(MnistDatabase.trainImages.get(i).data, true);
+				p.trainData(MnistDatabase.trainImages.get(i).getDataDouble(), true);
 			}else {
-				p.trainData(MnistDatabase.trainImages.get(i).data, false);
+				p.trainData(MnistDatabase.trainImages.get(i).getDataDouble(), false);
 			}
 		}
 		
@@ -19,10 +19,10 @@ public class RunVotingPerceptron {
 		int total=0;
 		for (int i=0;i<10000;i++){
 			if(MnistDatabase.testLabels.get(i)==5){
-				if (p.correctlyClassified(MnistDatabase.testImages.get(i).data))count++;
+				if (p.correctlyClassified(MnistDatabase.testImages.get(i).getDataDouble()))count++;
 				total++;
 			}else{
-				if (!p.correctlyClassified(MnistDatabase.testImages.get(i).data))count++;
+				if (!p.correctlyClassified(MnistDatabase.testImages.get(i).getDataDouble()))count++;
 				total++;
 			}
 		}

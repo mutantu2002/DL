@@ -7,6 +7,7 @@ package home.mutant.dl.gaussian.pattern;
 
 import home.mutant.dl.gaussian.Globals;
 import home.mutant.dl.models.Image;
+import home.mutant.dl.models.ImageDouble;
 
 import java.util.List;
 
@@ -28,10 +29,10 @@ public class TransformImagesRunnable implements Runnable{
 		for (int i=0;i<images.size();i++) {
 			double[] pixels = new double[neurons.size()];
 			for (int j = 0; j < neurons.size(); j++) {
-				int countSimilar = (int) neurons.get(j).countSimilar(images.get(i).data);
+				int countSimilar = (int) neurons.get(j).countSimilar(images.get(i).getDataDouble());
 				pixels[j] = countSimilar>=Globals.MAX_PIXEL_VALUE*Globals.SIMILARITY?countSimilar:0;
 			}
-			images.set(i, new Image(pixels));
+			images.set(i, new ImageDouble(pixels));
 
 		}
 	}

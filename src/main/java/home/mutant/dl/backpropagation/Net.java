@@ -10,7 +10,7 @@ public class Net {
 		MnistDatabase.loadImagesNormalized();
 		long t0=System.currentTimeMillis();
 		for(int i=0;i<100000;i++){
-			net.layers[0].z = MnistDatabase.trainImages.get(i%60000).data;
+			net.layers[0].z = MnistDatabase.trainImages.get(i%60000).getDataDouble();
 			net.forward();
 			//System.out.println("layer " + i);
 		}

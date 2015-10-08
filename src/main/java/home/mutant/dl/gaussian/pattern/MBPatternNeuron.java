@@ -2,6 +2,7 @@ package home.mutant.dl.gaussian.pattern;
 
 import home.mutant.dl.gaussian.Globals;
 import home.mutant.dl.models.Image;
+import home.mutant.dl.models.ImageDouble;
 import home.mutant.dl.utils.MnistDatabase;
 
 import java.util.Set;
@@ -19,13 +20,13 @@ public class MBPatternNeuron implements Comparable<MBPatternNeuron>{
 		pattern = new double[size];
 		int i=0;
 		for (Integer index : indexes) { 
-			pattern[i++] = MnistDatabase.trainImages.get(imagePatternIndex).data[index];
+			pattern[i++] = MnistDatabase.trainImages.get(imagePatternIndex).getDataDouble()[index];
 		}
 		//initRandom();
 	}
 	
 	public Image generateImage(){
-		return new Image(pattern);
+		return new ImageDouble(pattern);
 	}
 	public boolean isSimilar(double[] input){
 		double count = countSimilar(input);
@@ -53,11 +54,11 @@ public class MBPatternNeuron implements Comparable<MBPatternNeuron>{
 		return count/pattern.length;
 	}
 	public boolean isSimilar(int indexImage){
-		return isSimilar(MnistDatabase.trainImages.get(indexImage).data);
+		return isSimilar(MnistDatabase.trainImages.get(indexImage).getDataDouble());
 	}
 	public boolean trainImage(int indexImage) {
 		Image image = MnistDatabase.trainImages.get(indexImage);
-		boolean similar = isSimilar(image.data);
+		boolean similar = isSimilar(image.getDataDouble());
 		if (similar){
 			updatePattern(image);
 		}

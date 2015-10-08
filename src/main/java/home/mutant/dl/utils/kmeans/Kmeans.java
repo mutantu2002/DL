@@ -85,7 +85,7 @@ public class Kmeans
 			if (okToAddCenter(newCenter, mClusters)){
 				Cluster cluster = new Cluster();
 				mClusters.add(cluster);
-				cluster.center = newCenter.randomize();
+				cluster.center = newCenter.copy();
 				i++;
 			}
 		}

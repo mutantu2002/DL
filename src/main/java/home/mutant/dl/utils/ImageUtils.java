@@ -1,6 +1,7 @@
 package home.mutant.dl.utils;
 
 import home.mutant.dl.models.Image;
+import home.mutant.dl.models.ImageDouble;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -86,7 +87,7 @@ public class ImageUtils
 		List<Image> images = new ArrayList<Image>();
 		for (byte[][] bs : bytes) 
 		{
-			images.add(new Image(bs));
+			images.add(new ImageDouble(bs));
 		}
 		return images;
 	}
@@ -102,7 +103,7 @@ public class ImageUtils
 				pixels[i]= bs[i];
 				if (pixels[i]<0)pixels[i]+=256;
 			}
-			images.add(new Image(pixels));
+			images.add(new ImageDouble(pixels));
 		}
 		return images;
 	}
@@ -267,7 +268,7 @@ public class ImageUtils
 		AffineTransform tx = new AffineTransform();
 		tx.translate(offsetX, offsetY);
 		tx.rotate(theta, image.imageX/2, image.imageY/2);
-		Image dest = new Image(image.imageX, image.imageY);
+		Image dest = image.createImage(image.imageX, image.imageY);
 		for (int x=0;x<dest.imageX;x++)
 		{
 			for (int y=0;y<dest.imageY;y++)
@@ -312,7 +313,7 @@ public class ImageUtils
 	
 	public static Image blurImage(Image image)
 	{
-		Image dest = new Image(image.imageX, image.imageY);
+		Image dest = image.createImage(image.imageX, image.imageY);
 		for (int x=1;x<image.imageX-1;x++)
 		{
 			for (int y=1;y<image.imageY-1;y++)
@@ -335,7 +336,7 @@ public class ImageUtils
 	
 	public static Image gradientImage(Image image)
 	{
-		Image dest = new Image(image.imageX, image.imageY);
+		Image dest = image.createImage(image.imageX, image.imageY);
 		for (int x=1;x<image.imageX-1;x++)
 		{
 			for (int y=1;y<image.imageY-1;y++)
@@ -416,10 +417,5 @@ public class ImageUtils
 		AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
 		after = scaleOp.filter(before, after);
 		return after;
-	}
-	
-	public static Image scaleImage(Image image, double scale)
-	{
-		return new Image(scaleImage(createBufferedImage(image), scale));
 	}
 }

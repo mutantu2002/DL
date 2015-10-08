@@ -9,10 +9,10 @@ public class RunClusterPerceptron {
 		MnistDatabase.loadImages();
 		Perceptron p = new Perceptron(28*28);
 		for (int i=0;i<6000;i++){
-			if(p.output(MnistDatabase.trainImages.get(i).data)){
-				p.modifyWeights(MnistDatabase.trainImages.get(i).data, 1);
+			if(p.output(MnistDatabase.trainImages.get(i).getDataDouble())){
+				p.modifyWeights(MnistDatabase.trainImages.get(i).getDataDouble(), 1);
 			}else {
-				p.modifyWeights(MnistDatabase.trainImages.get(i).data, -1);
+				p.modifyWeights(MnistDatabase.trainImages.get(i).getDataDouble(), -1);
 			}
 		}
 		

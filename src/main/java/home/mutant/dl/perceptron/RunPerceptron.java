@@ -13,9 +13,9 @@ public class RunPerceptron {
 			for (int i=0;i<60000;i++){
 				int j = (int) (Math.random()*60000);
 				if(MnistDatabase.trainLabels.get(j)==trainLabel){
-					p.trainData(MnistDatabase.trainImages.get(j).data, 1);
+					p.trainData(MnistDatabase.trainImages.get(j).getDataDouble(), 1);
 				}else {
-					p.trainData(MnistDatabase.trainImages.get(j).data, 0);
+					p.trainData(MnistDatabase.trainImages.get(j).getDataDouble(), 0);
 				}
 			}
 			p.learningRate/=1.15;
@@ -25,10 +25,10 @@ public class RunPerceptron {
 		int total=0;
 		for (int i=0;i<10000;i++){
 			if(MnistDatabase.testLabels.get(i)==trainLabel){
-				if (p.output(MnistDatabase.testImages.get(i).data))count++;
+				if (p.output(MnistDatabase.testImages.get(i).getDataDouble()))count++;
 				total++;
 			}else{
-				if (!p.output(MnistDatabase.testImages.get(i).data))count++;
+				if (!p.output(MnistDatabase.testImages.get(i).getDataDouble()))count++;
 				total++;
 			}
 		}

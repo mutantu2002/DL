@@ -1,6 +1,7 @@
 package home.mutant.dl.perceptron;
 
 import home.mutant.dl.models.Image;
+import home.mutant.dl.models.ImageDouble;
 
 public class Perceptron {
 	public double[] coefficients;
@@ -136,7 +137,7 @@ public class Perceptron {
 	}
 	
 	public Image getImage(){
-		Image image = new Image(coefficients.length-1);
+		Image image = new ImageDouble(coefficients.length-1);
 		double max = -1*Double.MAX_VALUE;
 		double min = Double.MAX_VALUE;
 		for (int i = 0; i < coefficients.length-1; i++) {
@@ -145,7 +146,7 @@ public class Perceptron {
 		}
 		max=255/(max-min);
 		for (int i = 0; i < coefficients.length-1; i++) {
-			image.data[i]=(float) ((coefficients[i]-min)*max);
+			image.getDataDouble()[i]=(float) ((coefficients[i]-min)*max);
 		}
 		return image;
 	}

@@ -6,6 +6,7 @@
 package home.mutant.dl.gaussian;
 
 import home.mutant.dl.models.Image;
+import home.mutant.dl.models.ImageDouble;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +23,13 @@ public class GBNeuron {
 		}
 	}
 	public void trainImage(Image image){
-		double[] pixels = image.data;
+		double[] pixels = image.getDataDouble();
 		for (int i = 0; i < pixels.length; i++) {
 			synapses.get(i).addTarget(pixels[i]);
 		}
 	}
 	public void trainImage(Image image, int weight){
-		double[] pixels = image.data;
+		double[] pixels = image.getDataDouble();
 		for (int i = 0; i < pixels.length; i++) {
 			synapses.get(i).addTarget(pixels[i]);
 		}
@@ -53,7 +54,7 @@ public class GBNeuron {
 	}
 	public double getPosterior(Image image){
 		double posterior = 0;
-		double[] pixels = image.data;
+		double[] pixels = image.getDataDouble();
 		for (int i = 0; i < pixels.length; i++) {
 			posterior+=synapses.get(i).getPosterior(pixels[i]);
 		}
@@ -87,6 +88,6 @@ public class GBNeuron {
 		for (int i = 0; i < pixels.length; i++) {
 			pixels[i] =  (float) (synapses.get(i).mean);
 		}
-		return new Image(pixels);
+		return new ImageDouble(pixels);
 	}
 }

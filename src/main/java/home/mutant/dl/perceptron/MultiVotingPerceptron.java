@@ -26,8 +26,8 @@ public class MultiVotingPerceptron {
 			for (int i=0;i<images.size();i++)
 			{
 				int j = (int) (Math.random()*images.size());
-				if (labels.get(j)==noClass)perceptron.trainData(images.get(j).data, true);
-				else perceptron.trainData(images.get(j).data, false);
+				if (labels.get(j)==noClass)perceptron.trainData(images.get(j).getDataDouble(), true);
+				else perceptron.trainData(images.get(j).getDataDouble(), false);
 			}
 		}
 	}

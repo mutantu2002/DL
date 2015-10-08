@@ -3,6 +3,7 @@ package home.mutant.dl.utils.kmeans.model;
 import java.io.Serializable;
 
 import home.mutant.dl.models.Image;
+import home.mutant.dl.models.ImageDouble;
 
 public class SimpleClusterable implements Clusterable,Serializable {
 	private static final long serialVersionUID = 6582606937177300533L;
@@ -52,7 +53,7 @@ public class SimpleClusterable implements Clusterable,Serializable {
 //	}
 	
 	public Image getImage(){
-		Image image = new Image(weights.length);
+		Image image = new ImageDouble(weights.length);
 		double max = -1*Double.MAX_VALUE;
 		double min = Double.MAX_VALUE;
 		for (int i = 0; i < weights.length; i++) {
@@ -61,7 +62,7 @@ public class SimpleClusterable implements Clusterable,Serializable {
 		}
 		max=255/(max-min);
 		for (int i = 0; i < weights.length; i++) {
-			image.data[i]= (weights[i]-min)*max;
+			image.getDataDouble()[i]= (weights[i]-min)*max;
 		}
 		return image;
 	}

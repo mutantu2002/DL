@@ -18,7 +18,7 @@ public class RunMultiVotingPerceptron {
 		int total=10000;
 		for (int i=0;i<total;i++){
 			
-			int classForData = p.getClassForData(MnistDatabase.trainImages.get(i).data);
+			int classForData = p.getClassForData(MnistDatabase.trainImages.get(i).getDataDouble());
 			if(MnistDatabase.trainLabels.get(i)==classForData) count++;
 		}
 		System.out.println((double)count/total);

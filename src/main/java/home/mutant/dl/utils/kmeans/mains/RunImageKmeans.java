@@ -15,12 +15,12 @@ public class RunImageKmeans {
 		MnistDatabase.loadImages();
 		List<Clusterable> clusterables = new ArrayList<Clusterable>();
 		for (int i = 0; i < 60000; i++) {
-			clusterables.add(new SimpleClusterable(MnistDatabase.trainImages.get(i).data,MnistDatabase.trainLabels.get(i)));
+			clusterables.add(new SimpleClusterable(MnistDatabase.trainImages.get(i).getDataDouble(),MnistDatabase.trainLabels.get(i)));
 		}
 		
 		List<Clusterable> clusterablesTest = new ArrayList<Clusterable>();
 		for (int i = 0; i < 10000; i++) {
-			clusterablesTest.add(new SimpleClusterable(MnistDatabase.testImages.get(i).data));
+			clusterablesTest.add(new SimpleClusterable(MnistDatabase.testImages.get(i).getDataDouble()));
 		}
 
 		System.out.println(run(clusterables,clusterablesTest));

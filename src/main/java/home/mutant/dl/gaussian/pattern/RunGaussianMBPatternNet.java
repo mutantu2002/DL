@@ -77,7 +77,7 @@ public class RunGaussianMBPatternNet {
 	}
 	
 	private static MBPatternNet train() {
-		MBPatternNet net = new MBPatternNet(Globals.NO_COLUMNS, Globals.SUBIMG_SIZE, MnistDatabase.trainImages.get(0).data.length,Globals.NO_TRAIN);
+		MBPatternNet net = new MBPatternNet(Globals.NO_COLUMNS, Globals.SUBIMG_SIZE, MnistDatabase.trainImages.get(0).getDataDouble().length,Globals.NO_TRAIN);
 		net.trainImages();
 		return net;
 	}
@@ -91,7 +91,7 @@ public class RunGaussianMBPatternNet {
 		//MBPatternNeuron.similarityRate = 0.75;
 		for (int i=0;i<Globals.NO_TRAIN;i++)
 		{
-			double[] pixels = MnistDatabase.trainImages.get(i).data;
+			double[] pixels = MnistDatabase.trainImages.get(i).getDataDouble();
 			for (int j = 0; j < allNeurons.size(); j++) {
 				int countSimilar = (int) allNeurons.get(j).countSimilar(pixels);
 				input[j] = countSimilar>=Globals.MAX_PIXEL_VALUE*Globals.SIMILARITY?countSimilar:0;
@@ -110,7 +110,7 @@ public class RunGaussianMBPatternNet {
 		int count=0;
 		for (int i=0;i<Globals.NO_TEST;i++)
 		{
-			double[] pixels = MnistDatabase.testImages.get(i).data;
+			double[] pixels = MnistDatabase.testImages.get(i).getDataDouble();
 			for (int j = 0; j < allNeurons.size(); j++) {
 				int countSimilar = (int) allNeurons.get(j).countSimilar(pixels);
 				input[j] = countSimilar>=Globals.MAX_PIXEL_VALUE*Globals.SIMILARITY?countSimilar:0;

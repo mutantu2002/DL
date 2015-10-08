@@ -33,7 +33,7 @@ public class EntropyNet {
 				targets[label]=1;
 //				targets[(label+1)%10]=0.2;
 //				targets[(int) (Math.random()*10)]=1;
-				layer.stepBatch(MnistDatabase.trainImages.get(j).data, targets);
+				layer.stepBatch(MnistDatabase.trainImages.get(j).getDataDouble(), targets);
 				entropy+=layer.ylogy;
 //				for (int n=0;n<layer.neurons.length;n++){
 //					System.out.print(layer.neurons[n].error+"; ");
@@ -66,7 +66,7 @@ public class EntropyNet {
 		double max=-1*Double.MAX_VALUE;
 		int indexMax=-1;
 		for (int i = 0; i < layer.neurons.length; i++) {
-			layer.neurons[i].calculateActivation(image.data);
+			layer.neurons[i].calculateActivation(image.getDataDouble());
 		}
 		for (int i = 0;i<layer.neurons.length;i++){
 			double activation = layer.neurons[i].z;

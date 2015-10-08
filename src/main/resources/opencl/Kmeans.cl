@@ -2,7 +2,7 @@
 #define IMAGE_SIZE  16
 #define NO_CLUSTERS  256
 #define IMAGES_PER_WORK_ITEM  625
-#define WORK_ITEMS 20000
+#define WORK_ITEMS 2560
 
 __kernel void updateCenters(__global double *centers, __global double *images, __global double *updates)
 {

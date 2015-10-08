@@ -41,7 +41,7 @@ public class SeparatedMLPerceptron {
 		int count=0;
 		int total=0;
 		for (int i=0;i<10000;i++){
-			int trainLabel = getClassForData(MnistDatabase.testImages.get(i).data);
+			int trainLabel = getClassForData(MnistDatabase.testImages.get(i).getDataDouble());
 			if(MnistDatabase.testLabels.get(i)==trainLabel){
 				count++;
 			}

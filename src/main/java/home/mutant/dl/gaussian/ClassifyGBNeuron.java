@@ -19,7 +19,7 @@ import java.util.List;
 public class ClassifyGBNeuron {
 	List<GBNeuron> neurons = new ArrayList<GBNeuron>();
 	public ClassifyGBNeuron(List<Image> images, List<Integer> labels){
-		int size = images.get(0).data.length;
+		int size = images.get(0).getDataDouble().length;
 		for (int i = 0; i < 10; i++) {
 			neurons.add(new GBNeuron(size));
 		}

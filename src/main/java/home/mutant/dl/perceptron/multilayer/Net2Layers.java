@@ -63,15 +63,15 @@ public class Net2Layers {
 	}
 	
 	public void step(Image image, int label){
-		hidden.forward(image.data);
+		hidden.forward(image.getDataDouble());
 		Arrays.fill(targets, 0);
 		targets[label]=1;
 		if (output.trainData(hidden.activations, targets))
-			hidden.backward(output.errors, image.data);
+			hidden.backward(output.errors, image.getDataDouble());
 	}
 	
 	public int getMaxOutputIndex(Image image){
-		hidden.forward(image.data);
+		hidden.forward(image.getDataDouble());
 		output.forward(hidden.activations);
 		double max=-1*Double.MAX_VALUE;
 		int indexMax=-1;

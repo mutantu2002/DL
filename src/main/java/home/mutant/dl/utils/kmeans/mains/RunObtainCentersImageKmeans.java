@@ -20,7 +20,7 @@ public class RunObtainCentersImageKmeans {
 		List<Clusterable> clusterables = new ArrayList<Clusterable>();
 		for (int i = 0; i < 60000; i++) {
 				for (int j=0;j<100;j++)
-					clusterables.add(new SimpleClusterable(MnistDatabase.trainImages.get(i).extractImage((int)((28-SUBIMAGE_SIZE)*Math.random()), (int)((28-SUBIMAGE_SIZE)*Math.random()), SUBIMAGE_SIZE, SUBIMAGE_SIZE).data));
+					clusterables.add(new SimpleClusterable(MnistDatabase.trainImages.get(i).extractImage((int)((28-SUBIMAGE_SIZE)*Math.random()), (int)((28-SUBIMAGE_SIZE)*Math.random()), SUBIMAGE_SIZE, SUBIMAGE_SIZE).getDataDouble()));
 		}
 		List<Cluster> clusters = Kmeans.run(clusterables, 100,false,false);
 		System.out.println(clusters.size());

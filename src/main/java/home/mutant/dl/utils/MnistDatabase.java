@@ -80,7 +80,7 @@ public class MnistDatabase
 	{
 		for(int i=0;i<images.size();i++)
 		{
-			images.set(i, ImageUtils.scaleImage(images.get(i), scale));
+			images.set(i, images.get(i).scaleImage(scale));
 		}
 	}
 	private static void normalize(List<Image> images)

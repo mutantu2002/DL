@@ -9,7 +9,7 @@ public class RunMultiPerceptron {
 		MultiPerceptron p = new MultiPerceptron(10, 28*28);
 		for (int i=0;i<6000000;i++){
 			int j = (int) (Math.random()*60000);
-			p.addClassData(MnistDatabase.trainImages.get(j).data, MnistDatabase.trainLabels.get(j));
+			p.addClassData(MnistDatabase.trainImages.get(j).getDataDouble(), MnistDatabase.trainLabels.get(j));
 		}
 //		for (int i=0;i<60000;i++){
 //			p.addClassData(MnistDatabase.trainImages.get(i).data, MnistDatabase.trainLabels.get(i));
@@ -17,7 +17,7 @@ public class RunMultiPerceptron {
 		int count=0;
 		int total=0;
 		for (int i=0;i<10000;i++){
-			if(MnistDatabase.testLabels.get(i)==p.getClassForData(MnistDatabase.testImages.get(i).data)) count++;
+			if(MnistDatabase.testLabels.get(i)==p.getClassForData(MnistDatabase.testImages.get(i).getDataDouble())) count++;
 			total++;
 		}
 		

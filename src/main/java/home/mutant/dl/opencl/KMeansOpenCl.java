@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import home.mutant.dl.models.Image;
+import home.mutant.dl.models.ImageDouble;
 import home.mutant.dl.opencl.model.Kernel;
 import home.mutant.dl.opencl.model.Memory;
 import home.mutant.dl.opencl.model.Program;
@@ -16,7 +17,7 @@ public class KMeansOpenCl {
 	public static final int DIM_FILTER = 4;
 	public static final int NO_CLUSTERS = 256;
 	public static final int IMAGES_PER_WORK_ITEM = 625;
-	public static final int WORK_ITEMS = 20000;
+	public static final int WORK_ITEMS = 2560;
 	public static final int NO_ITERATIONS = 5;
 	
 	public static void main(String[] args) throws Exception {
@@ -52,15 +53,15 @@ public class KMeansOpenCl {
 			memUpdates.copyHtoD();
 			for (int batch=0 ;batch<60000/WORK_ITEMS;batch++){
 				for (int i=0;i<WORK_ITEMS;i++){
-					System.arraycopy(ImageUtils.divideSquareImageUnidimensional(MnistDatabase.trainImages.get(batch*WORK_ITEMS+i).data, DIM_FILTER), 0, subImages, i*(DIM_FILTER*DIM_FILTER)*625, (DIM_FILTER*DIM_FILTER)*625);
+					System.arraycopy(ImageUtils.divideSquareImageUnidimensional(MnistDatabase.trainImages.get(batch*WORK_ITEMS+i).getDataDouble(), DIM_FILTER), 0, subImages, i*(DIM_FILTER*DIM_FILTER)*625, (DIM_FILTER*DIM_FILTER)*625);
 				}
 				long t0 = System.currentTimeMillis();
 				memImages.copyHtoD();
-				updateCenters.run(WORK_ITEMS, 256);
+				updateCenters.run(WORK_ITEMS, 128);
 				program.finish();
 				tTotal+=System.currentTimeMillis()-t0;
 			}
-			reduceCenters.run(NO_CLUSTERS, 256);
+			reduceCenters.run(NO_CLUSTERS, 128);
 			program.finish();
 
 			System.out.println("Iteration "+iteration);
@@ -78,8 +79,8 @@ public class KMeansOpenCl {
 		memClusters.copyDtoH();
 		List<Image> images = new ArrayList<Image>();
 		for (int i=0;i<NO_CLUSTERS;i++) {
-			Image image = new Image(DIM_FILTER*DIM_FILTER);
-			System.arraycopy(memClusters.getSrc(), i*DIM_FILTER*DIM_FILTER, image.data, 0, DIM_FILTER*DIM_FILTER);
+			Image image = new ImageDouble(DIM_FILTER*DIM_FILTER);
+			System.arraycopy(memClusters.getSrc(), i*DIM_FILTER*DIM_FILTER, image.getDataDouble(), 0, DIM_FILTER*DIM_FILTER);
 			images.add(image);
 		}
 		ResultFrame frame = new ResultFrame(600, 600);

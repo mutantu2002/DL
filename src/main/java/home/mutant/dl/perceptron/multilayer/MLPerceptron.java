@@ -56,7 +56,7 @@ public class MLPerceptron implements Runnable{
 	}
 	
 	public void step(Image image, int label){
-		layer.forward(image.data);
+		layer.forward(image.getDataDouble());
 		double error;
 		if(trainLabel==label){
 			error = perceptron.trainData(layer.activations, 1);
@@ -66,14 +66,14 @@ public class MLPerceptron implements Runnable{
 		for(int i=0;i<errors.length;i++){
 			errors[i] = -(perceptron.coefficients[i])*error;
 		}
-		layer.backward(errors, image.data);
+		layer.backward(errors, image.getDataDouble());
 	}
 	
 	public void test(){
 		int count=0;
 		int total=0;
 		for (int i=0;i<10000;i++){
-			layer.forward(MnistDatabase.testImages.get(i).data);
+			layer.forward(MnistDatabase.testImages.get(i).getDataDouble());
 			boolean output = perceptron.output(layer.activations);
 			if(MnistDatabase.testLabels.get(i)==trainLabel){
 				if (output)count++;
