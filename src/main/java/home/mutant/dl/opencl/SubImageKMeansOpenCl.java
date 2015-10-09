@@ -18,6 +18,7 @@ public class SubImageKMeansOpenCl {
 	public static final int WORK_ITEMS = 10000;
 	public static final int DIM_IMAGE = 28;
 	public static final int NO_ITERATIONS = 20;
+	public static final int NO_MNIST_IMAGES = 60000;
 	
 	public static void main(String[] args) throws Exception {
 		MnistDatabase.loadImages();
@@ -55,7 +56,7 @@ public class SubImageKMeansOpenCl {
 		for (int iteration=0;iteration<NO_ITERATIONS;iteration++){
 			Arrays.fill(clustersUpdates, 0);
 			memUpdates.copyHtoD();
-			for (int batch=0 ;batch<60000/WORK_ITEMS;batch++){
+			for (int batch=0 ;batch<NO_MNIST_IMAGES/WORK_ITEMS;batch++){
 				for (int i=0;i<WORK_ITEMS;i++){
 					System.arraycopy(MnistDatabase.trainImages.get(batch*WORK_ITEMS+i).getDataDouble(), 0, inputImages, i*(DIM_IMAGE*DIM_IMAGE), DIM_IMAGE*DIM_IMAGE);
 				}
