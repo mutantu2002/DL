@@ -14,8 +14,8 @@ import home.mutant.dl.utils.MnistDatabase;
 
 public class SubImageKMeansOpenCl {
 	public static final int DIM_FILTER = 7;
-	public static final int NO_CLUSTERS = 256;
-	public static final int WORK_ITEMS = 10000;
+	public static final int NO_CLUSTERS = 128;
+	public static final int WORK_ITEMS = 1280;
 	public static final int DIM_IMAGE = 28;
 	public static final int NO_ITERATIONS = 10;
 	
@@ -55,19 +55,19 @@ public class SubImageKMeansOpenCl {
 		for (int iteration=0;iteration<NO_ITERATIONS;iteration++){
 			Arrays.fill(clustersUpdates, 0);
 			memUpdates.copyHtoD();
-			for (int batch=0 ;batch<60000/WORK_ITEMS;batch++){
+			for (int batch=0 ;batch<6000/WORK_ITEMS;batch++){
 				for (int i=0;i<WORK_ITEMS;i++){
 					System.arraycopy(MnistDatabase.trainImages.get(batch*WORK_ITEMS+i).getDataDouble(), 0, inputImages, i*(DIM_IMAGE*DIM_IMAGE), DIM_IMAGE*DIM_IMAGE);
 				}
 				long t0 = System.currentTimeMillis();
 				memImages.copyHtoD();
-				updateCenters.run(WORK_ITEMS, 256);
+				updateCenters.run(WORK_ITEMS, 128);
 				program.finish();
 				tTotal+=System.currentTimeMillis()-t0;
 			}
-			reduceCenters.run(NO_CLUSTERS, 256);
+			reduceCenters.run(NO_CLUSTERS, 128);
 			program.finish();
-			mixCenters.run(NO_CLUSTERS, 256);
+			mixCenters.run(NO_CLUSTERS, 128);
 			program.finish();
 			System.out.println("Iteration "+iteration);
 		}

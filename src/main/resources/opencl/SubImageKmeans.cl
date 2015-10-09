@@ -1,8 +1,8 @@
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
 
 #define DIM_FILTER  7
-#define WORK_ITEMS 10000
-#define NO_CLUSTERS  256
+#define WORK_ITEMS 1280
+#define NO_CLUSTERS  128
 
 #define DIM_IMAGE  28
 #define IMAGE_SIZE  (DIM_IMAGE*DIM_IMAGE)
@@ -106,12 +106,12 @@ __kernel void mixCenters(__global double *centers,  __global double *updates)
 		if (offsetCenter>0)
 		{
 			influence = influence + updates[(offsetCenter-1)*(FILTER_SIZE+1)+centerIndex];
-			noMean++;
+			noMean=noMean+1;
 		}
 		if (offsetCenter<NO_CLUSTERS-1)
 		{
 			influence = influence + updates[(offsetCenter+1)*(FILTER_SIZE+1)+centerIndex];
-			noMean++;
+			noMean=noMean+1;
 		}
 		centers[offsetCenter*FILTER_SIZE+centerIndex]=(updates[offsetCenter*(FILTER_SIZE+1)+centerIndex]+influence)/noMean;
 		//centers[offsetCenter*FILTER_SIZE+centerIndex]=updates[offsetCenter*(FILTER_SIZE+1)+centerIndex];
