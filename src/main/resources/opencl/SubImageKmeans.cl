@@ -1,8 +1,8 @@
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
 
 #define DIM_FILTER  7
-#define WORK_ITEMS 1280
-#define NO_CLUSTERS  128
+#define WORK_ITEMS 10000
+#define NO_CLUSTERS  256
 
 #define DIM_IMAGE  28
 #define IMAGE_SIZE  (DIM_IMAGE*DIM_IMAGE)
@@ -115,5 +115,41 @@ __kernel void mixCenters(__global double *centers,  __global double *updates)
 		}
 		centers[offsetCenter*FILTER_SIZE+centerIndex]=(updates[offsetCenter*(FILTER_SIZE+1)+centerIndex]+influence)/noMean;
 		//centers[offsetCenter*FILTER_SIZE+centerIndex]=updates[offsetCenter*(FILTER_SIZE+1)+centerIndex];
+	}
+}
+
+__kernel void mixCenters2D(__global double *centers,  __global double *updates)
+{
+	int offsetCenter = get_global_id(0);
+	int centerIndex;
+	double noMean=1;
+	double influence=0;
+	int offsetCenterX=offsetCenter%16;
+	int offsetCenterY=offsetCenter/16;
+	for(centerIndex=0;centerIndex<FILTER_SIZE;centerIndex++)
+	{
+		noMean=1;
+		influence=0;
+		if (offsetCenterX>0)
+		{
+			influence = influence + updates[(offsetCenterY*16+offsetCenterX-1)*(FILTER_SIZE+1)+centerIndex];
+			noMean=noMean+1;
+		}
+		if (offsetCenterX<16-1)
+		{
+			influence = influence + updates[(offsetCenterY*16+offsetCenterX+1)*(FILTER_SIZE+1)+centerIndex];
+			noMean=noMean+1;
+		}
+		if (offsetCenterY>0)
+		{
+			influence = influence + updates[((offsetCenterY-1)*16+offsetCenterX)*(FILTER_SIZE+1)+centerIndex];
+			noMean=noMean+1;
+		}
+		if (offsetCenterY<16-1)
+		{
+			influence = influence + updates[((offsetCenterY+1)*16+offsetCenterX)*(FILTER_SIZE+1)+centerIndex];
+			noMean=noMean+1;
+		}
+		centers[offsetCenter*FILTER_SIZE+centerIndex]=(updates[offsetCenter*(FILTER_SIZE+1)+centerIndex]+influence)/noMean;
 	}
 }
