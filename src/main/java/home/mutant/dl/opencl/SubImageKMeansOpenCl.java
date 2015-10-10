@@ -15,14 +15,13 @@ import home.mutant.dl.utils.MnistDatabase;
 public class SubImageKMeansOpenCl {
 	public static final int DIM_FILTER = 7;
 	public static final int NO_CLUSTERS = 128;
-	public static final int WORK_ITEMS = 1280;
+	public static final int WORK_ITEMS = 640;
 	public static final int NO_ITERATIONS = 2;
 	
 	public static final int WORK_GROUP_SIZE = 128;
 	
-	
 	public static final int DIM_IMAGE = 28;
-	public static final int NO_MNIST_IMAGES = 60000;
+	public static final int NO_MNIST_IMAGES = 6000;
 	
 	public static void main(String[] args) throws Exception {
 		MnistDatabase.loadImages();
@@ -47,12 +46,20 @@ public class SubImageKMeansOpenCl {
 		
 		Kernel updateCenters = new Kernel(program, "updateCenters");
 		updateCenters.setArguments(memClusters,memImages,memUpdates);
+		updateCenters.setArgument(DIM_FILTER,3);
+		updateCenters.setArgument(NO_CLUSTERS,4);
 		
 		Kernel reduceCenters = new Kernel(program, "reduceCenters");
 		reduceCenters.setArguments(memUpdates);
+		reduceCenters.setArgument(DIM_FILTER,1);
+		reduceCenters.setArgument(NO_CLUSTERS,2);
+		reduceCenters.setArgument(WORK_ITEMS,3);
 		
+		int dimNoClusters = (int) Math.sqrt(NO_CLUSTERS);
 		Kernel mixCenters = new Kernel(program, "mixCenters2D");
 		mixCenters.setArguments(memClusters, memUpdates);
+		mixCenters.setArgument(DIM_FILTER,2);
+		mixCenters.setArgument(dimNoClusters,3);
 		
 		long tTotal=0;
 
@@ -95,7 +102,7 @@ public class SubImageKMeansOpenCl {
 		}
 		
 		ResultFrame frame = new ResultFrame(600, 600);
-		frame.showImages(imgClusters,16);
+		frame.showImages(imgClusters,dimNoClusters);
 		
 		memClusters.release();
 		memImages.release();
