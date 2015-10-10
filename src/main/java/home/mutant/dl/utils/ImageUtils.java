@@ -2,6 +2,8 @@ package home.mutant.dl.utils;
 
 import home.mutant.dl.models.Image;
 import home.mutant.dl.models.ImageDouble;
+import home.mutant.dl.models.ImageFloat;
+import home.mutant.dl.utils.MnistDatabase.TYPE;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -18,7 +20,6 @@ import javax.imageio.ImageIO;
 
 public class ImageUtils 
 {
-	public enum Style {BW, GREY};
 	public static void readResourceImage(String imageResourcePath, byte[] inValues) throws IOException 
 	{
 		readImage(ImageIO.read(ImageUtils.class.getResourceAsStream(imageResourcePath)), inValues);
@@ -87,27 +88,20 @@ public class ImageUtils
 		List<Image> images = new ArrayList<Image>();
 		for (byte[][] bs : bytes) 
 		{
-			images.add(new ImageDouble(bs));
+			Image newImage;
+			if (MnistDatabase.IMAGE_TYPE==TYPE.DOUBLE)
+			{
+				newImage = new ImageDouble(bs);
+			}
+			else
+			{
+				newImage = new ImageFloat(bs);
+			}
+			images.add(newImage);
 		}
 		return images;
 	}
 	
-	public static List<Image> readMnistAsBWImage(String imageResourcePath)
-	{
-		List<byte[]> bytes =convertToBW(readMnist(imageResourcePath));
-		List<Image> images = new ArrayList<Image>();
-		for (byte[] bs : bytes) 
-		{
-			double[] pixels = new double[bs.length];
-			for (int i = 0; i < bs.length; i++) {
-				pixels[i]= bs[i];
-				if (pixels[i]<0)pixels[i]+=256;
-			}
-			images.add(new ImageDouble(pixels));
-		}
-		return images;
-	}
-
 	public static List<byte[][]> readMnist(String imageResourcePath)
 	{
 		return readMnist(imageResourcePath, 28);
@@ -171,33 +165,6 @@ public class ImageUtils
 			}
 		}
 		return res;
-	}
-	public static List<byte[]> convertToBW(List<byte[][]> images)
-	{
-		List<byte[]> newImages = new ArrayList<byte[]>();
-		for (byte[][] image : images)
-		{
-			int offset = 0;
-			byte[] newImage = new byte[28*28];
-			for (int i = 0;i<28;i++)
-			{
-				for (int j = 0;j<28;j++)
-				{
-					if (image[i][j]!=0)
-					{
-						newImage[offset++]=(byte) 255;
-						image[i][j]=(byte) 255;
-					}
-					else
-					{
-						newImage[offset++]=(byte) 0;
-						image[i][j]=(byte) 0;
-					}
-				}				
-			}
-			newImages.add(newImage);
-		}
-		return newImages;
 	}
 	
 	public static List<double[]> divideImage(double[] image, int newX, int newY, int actualX, int actualY)
@@ -263,6 +230,27 @@ public class ImageUtils
 		}
 		return dividedImages;
 	}
+	public static List<float[]> divideImage(float[] image, int newX, int newY, int actualX, int actualY, int stepX, int stepY)
+	{
+		List<float[]> dividedImages = new ArrayList<float[]>();
+		for (int y=0; y<=actualY-newY; y+=stepY)
+		{
+			for (int x=0; x<=actualX-newX; x+=stepX)
+			{
+				float[] newImage = new float[newX*newY];
+				int offsetImage = 0;
+				for (int imageY = y; imageY<y+newY; imageY++)
+				{
+					for (int imageX = x; imageX<x+newX; imageX++)
+					{
+						newImage[offsetImage++] = image[imageY*actualX+imageX];
+					}
+				}
+				dividedImages.add(newImage);
+			}		
+		}
+		return dividedImages;
+	}
 	public static Image affineTransform(Image image, int offsetX, int offsetY, double theta)
 	{
 		AffineTransform tx = new AffineTransform();
@@ -295,20 +283,12 @@ public class ImageUtils
 		return dest;
 	}
 	
-	public static void loadImages(List<Image> trainImages, List<Image> testImages, List<Integer> trainLabels, List<Integer> testLabels, Style style) throws IOException
+	public static void loadImages(List<Image> trainImages, List<Image> testImages, List<Integer> trainLabels, List<Integer> testLabels) throws IOException
 	{
 		trainLabels.addAll(ImageUtils.readMinstLabels("/mnist/train-labels.idx1-ubyte"));
 		testLabels.addAll(ImageUtils.readMinstLabels("/mnist/t10k-labels.idx1-ubyte"));
-		if (style == Style.BW)
-		{
-			trainImages.addAll(ImageUtils.readMnistAsBWImage("/mnist/train-images.idx3-ubyte"));
-			testImages.addAll(ImageUtils.readMnistAsBWImage("/mnist/t10k-images.idx3-ubyte"));
-		}
-		else
-		{
-			trainImages.addAll(ImageUtils.readMnistAsImage("/mnist/train-images.idx3-ubyte"));
-			testImages.addAll(ImageUtils.readMnistAsImage("/mnist/t10k-images.idx3-ubyte"));			
-		}
+		trainImages.addAll(ImageUtils.readMnistAsImage("/mnist/train-images.idx3-ubyte"));
+		testImages.addAll(ImageUtils.readMnistAsImage("/mnist/t10k-images.idx3-ubyte"));			
 	}
 	
 	public static Image blurImage(Image image)

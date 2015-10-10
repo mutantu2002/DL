@@ -1,9 +1,7 @@
-#pragma OPENCL EXTENSION cl_khr_fp64 : enable
-
 #define DIM_IMAGE  28
 #define IMAGE_SIZE  784
 
-__kernel void updateCenters(__global double *centers, __global double *images, __global double *updates, const int dimFilter,const int noClusters)
+__kernel void updateCenters(__global float *centers, __global float *images, __global float *updates, const int dimFilter,const int noClusters)
 {
 	int imagesOffset = get_global_id(0)*IMAGE_SIZE;
 	int filterSize=dimFilter*dimFilter;
@@ -12,10 +10,10 @@ __kernel void updateCenters(__global double *centers, __global double *images, _
 
 	int centersIndex=0;
 	
-	double sum=0;
+	float sum=0;
 	int index=0;
-	double weight;
-	double min;
+	float weight;
+	float min;
 	int minCenterIndex;
 	
 	int imageX;
@@ -23,7 +21,7 @@ __kernel void updateCenters(__global double *centers, __global double *images, _
 	int filterX;
 	int filterY;
 	
-	double subImageBuffer[IMAGE_SIZE];
+	float subImageBuffer[IMAGE_SIZE];
 
 	for(imageX=0;imageX<=DIM_IMAGE-dimFilter;imageX++)
 	{
@@ -62,13 +60,13 @@ __kernel void updateCenters(__global double *centers, __global double *images, _
 	}
 }
 
-__kernel void reduceCenters(__global double *updates, const int dimFilter,const int noClusters, const int workItems)
+__kernel void reduceCenters(__global float *updates, const int dimFilter,const int noClusters, const int workItems)
 {
 	int offsetCenter = get_global_id(0);
 	int indexWorkItem=0;
 	int filterSize=dimFilter*dimFilter;
 	
-	double centerBuffer[IMAGE_SIZE+1];
+	float centerBuffer[IMAGE_SIZE+1];
 	int centerIndex;
 	for(centerIndex=0;centerIndex<filterSize+1;centerIndex++)
 	{
@@ -90,13 +88,13 @@ __kernel void reduceCenters(__global double *updates, const int dimFilter,const 
 	}
 }
 
-__kernel void mixCenters(__global double *centers,  __global double *updates, const int dimFilter, const int noClusters)
+__kernel void mixCenters(__global float *centers,  __global float *updates, const int dimFilter, const int noClusters)
 {
 	int offsetCenter = get_global_id(0);
 	int filterSize=dimFilter*dimFilter;
 	int centerIndex;
-	double noMean=1;
-	double influence=0;
+	float noMean=1;
+	float influence=0;
 
 	for(centerIndex=0;centerIndex<filterSize;centerIndex++)
 	{
@@ -117,13 +115,13 @@ __kernel void mixCenters(__global double *centers,  __global double *updates, co
 	}
 }
 
-__kernel void mixCenters2D(__global double *centers,  __global double *updates, const int dimFilter, const int dimNoClusters)
+__kernel void mixCenters2D(__global float *centers,  __global float *updates, const int dimFilter, const int dimNoClusters)
 {
 	int offsetCenter = get_global_id(0);
 	int filterSize=dimFilter*dimFilter;
 	int centerIndex;
-	double noMean=1;
-	double influence=0;
+	float noMean=1;
+	float influence=0;
 	
 	int offsetCenterX=offsetCenter%dimNoClusters;
 	int offsetCenterY=offsetCenter/dimNoClusters;

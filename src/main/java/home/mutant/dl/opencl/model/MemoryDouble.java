@@ -6,12 +6,12 @@ import org.jocl.Pointer;
 import org.jocl.Sizeof;
 import org.jocl.cl_mem;
 
-public class Memory {
+public class MemoryDouble {
 	Program program;
 	cl_mem clMemObject;
 	double[] src;
 	
-	public Memory(Program program) {
+	public MemoryDouble(Program program) {
 		super();
 		this.program = program;
 	}

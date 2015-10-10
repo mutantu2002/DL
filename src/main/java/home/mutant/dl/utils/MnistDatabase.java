@@ -1,7 +1,6 @@
 package home.mutant.dl.utils;
 
 
-import home.mutant.dl.utils.ImageUtils.Style;
 import home.mutant.dl.models.Image;
 
 import java.io.IOException;
@@ -10,24 +9,22 @@ import java.util.List;
 
 public class MnistDatabase
 {
+	public enum TYPE{FLOAT,DOUBLE};
+	public static TYPE IMAGE_TYPE = TYPE.DOUBLE;
 	public static List<Image> trainImages = new ArrayList<Image>();
 	public static List<Integer> trainLabels  = new ArrayList<Integer>();
 
 	public static List<Image> testImages = new ArrayList<Image>();
 	public static List<Integer> testLabels  = new ArrayList<Integer>();
 	
-	public static void loadImagesBW() throws IOException
-	{
-		ImageUtils.loadImages(trainImages, testImages, trainLabels, testLabels, Style.BW);
-	}
 	public static void loadImages() throws IOException
 	{
-		ImageUtils.loadImages(trainImages, testImages, trainLabels, testLabels, Style.GREY);
+		ImageUtils.loadImages(trainImages, testImages, trainLabels, testLabels);
 	}
 	
 	public static void loadImagesNormalized() throws IOException
 	{
-		ImageUtils.loadImages(trainImages, testImages, trainLabels, testLabels, Style.GREY);
+		ImageUtils.loadImages(trainImages, testImages, trainLabels, testLabels);
 		normalize(MnistDatabase.trainImages);
 		normalize(MnistDatabase.testImages);
 	}
@@ -38,7 +35,6 @@ public class MnistDatabase
 		testLabels.addAll(ImageUtils.readMinstLabels("/mnist/t10k-labels.idx1-ubyte"));
 		trainImages.addAll(ImageUtils.readMnistAsImage("/mnist/train-images.idx3-ubyte", newImageSize));
 		testImages.addAll(ImageUtils.readMnistAsImage("/mnist/t10k-images.idx3-ubyte", newImageSize));			
-		
 	}
 	
 	public static void loadImagesScaled(double scale) throws IOException

@@ -16,19 +16,23 @@ public class Kernel {
 		clKernel = clCreateKernel(program.getProgram(), functionName, null);
 	}
 	
-	public void setArgument(Memory memory, int index){
+	public void setArgument(MemoryDouble memory, int index){
 		clSetKernelArg(clKernel, index, Sizeof.cl_mem, Pointer.to(memory.gemMemObject()));
 	}
 	
 	public void setArgument(int value, int index){
 		clSetKernelArg(clKernel, index, Sizeof.cl_int, Pointer.to(new int[]{ value }));
 	}	
-	public void setArguments(Memory ... memories){
+	public void setArguments(MemoryDouble ... memories){
 		for (int i = 0; i < memories.length; i++) {
 			clSetKernelArg(clKernel, i, Sizeof.cl_mem, Pointer.to(memories[i].gemMemObject()));
 		}
 	}
-	
+	public void setArguments(MemoryFloat ... memories){
+		for (int i = 0; i < memories.length; i++) {
+			clSetKernelArg(clKernel, i, Sizeof.cl_mem, Pointer.to(memories[i].gemMemObject()));
+		}
+	}
 	public int run(long globalworkSize, long localWorksize)
 	{
         return clEnqueueNDRangeKernel(program.getCommandQueue(), clKernel, 1, null, new long[]{globalworkSize}, new long[]{localWorksize}, 0, null, null);

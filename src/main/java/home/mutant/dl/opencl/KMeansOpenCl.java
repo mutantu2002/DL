@@ -7,7 +7,7 @@ import java.util.List;
 import home.mutant.dl.models.Image;
 import home.mutant.dl.models.ImageDouble;
 import home.mutant.dl.opencl.model.Kernel;
-import home.mutant.dl.opencl.model.Memory;
+import home.mutant.dl.opencl.model.MemoryDouble;
 import home.mutant.dl.opencl.model.Program;
 import home.mutant.dl.ui.ResultFrame;
 import home.mutant.dl.utils.ImageUtils;
@@ -32,13 +32,13 @@ public class KMeansOpenCl {
 		
 		Program program = new Program(Program.readResource("/opencl/Kmeans.cl"));
 		
-		Memory memClusters = new Memory(program);
+		MemoryDouble memClusters = new MemoryDouble(program);
 		memClusters.addReadWrite(clustersCenters);
 		
-		Memory memImages = new Memory(program);
+		MemoryDouble memImages = new MemoryDouble(program);
 		memImages.addReadOnly(subImages);
 		
-		Memory memUpdates = new Memory(program);
+		MemoryDouble memUpdates = new MemoryDouble(program);
 		memUpdates.addReadWrite(clustersUpdates);
 		
 		Kernel updateCenters = new Kernel(program, "updateCenters");
