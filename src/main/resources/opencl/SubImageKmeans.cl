@@ -1,8 +1,8 @@
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
 
 #define DIM_FILTER  7
-#define WORK_ITEMS 10000
-#define NO_CLUSTERS  256
+#define WORK_ITEMS 1280
+#define NO_CLUSTERS  128
 
 #define DIM_IMAGE  28
 #define IMAGE_SIZE  (DIM_IMAGE*DIM_IMAGE)

@@ -14,10 +14,14 @@ import home.mutant.dl.utils.MnistDatabase;
 
 public class SubImageKMeansOpenCl {
 	public static final int DIM_FILTER = 7;
-	public static final int NO_CLUSTERS = 256;
-	public static final int WORK_ITEMS = 10000;
+	public static final int NO_CLUSTERS = 128;
+	public static final int WORK_ITEMS = 1280;
+	public static final int NO_ITERATIONS = 2;
+	
+	public static final int WORK_GROUP_SIZE = 128;
+	
+	
 	public static final int DIM_IMAGE = 28;
-	public static final int NO_ITERATIONS = 20;
 	public static final int NO_MNIST_IMAGES = 60000;
 	
 	public static void main(String[] args) throws Exception {
@@ -62,13 +66,13 @@ public class SubImageKMeansOpenCl {
 				}
 				long t0 = System.currentTimeMillis();
 				memImages.copyHtoD();
-				updateCenters.run(WORK_ITEMS, 128);
+				updateCenters.run(WORK_ITEMS, WORK_GROUP_SIZE);
 				program.finish();
 				tTotal+=System.currentTimeMillis()-t0;
 			}
-			reduceCenters.run(NO_CLUSTERS, 128);
+			reduceCenters.run(NO_CLUSTERS, WORK_GROUP_SIZE);
 			program.finish();
-			mixCenters.run(NO_CLUSTERS, 128);
+			mixCenters.run(NO_CLUSTERS, WORK_GROUP_SIZE);
 			program.finish();
 			System.out.println("Iteration "+iteration);
 		}
