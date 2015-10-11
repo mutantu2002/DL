@@ -17,11 +17,11 @@ import java.util.List;
 
 public class SubImageKMeansOpenCl {
 	public static final int DIM_FILTER = 7;
-	public static final int NO_CLUSTERS = 64;
-	public static final int WORK_ITEMS = 640;
-	public static final int NO_ITERATIONS = 2;
+	public static final int NO_CLUSTERS = 256;
+	public static final int WORK_ITEMS = 10000;
+	public static final int NO_ITERATIONS = 20;
 	
-	public static final int WORK_GROUP_SIZE = 64;
+	public static final int WORK_GROUP_SIZE = 256;
 	
 	public static final int DIM_IMAGE = 28;
 	public static final int NO_MNIST_IMAGES = 60000;
@@ -50,8 +50,7 @@ public class SubImageKMeansOpenCl {
 		
 		Kernel updateCenters = new Kernel(program, "updateCenters");
 		updateCenters.setArguments(memClusters,memImages,memUpdates);
-		updateCenters.setArgument(DIM_FILTER,3);
-		updateCenters.setArgument(NO_CLUSTERS,4);
+		//updateCenters.set2Argument(DIM_FILTER,NO_CLUSTERS, 3);
 		
 		Kernel reduceCenters = new Kernel(program, "reduceCenters");
 		reduceCenters.setArguments(memUpdates);
