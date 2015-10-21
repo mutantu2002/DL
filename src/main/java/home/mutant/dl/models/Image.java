@@ -3,8 +3,9 @@ package home.mutant.dl.models;
 import home.mutant.dl.utils.ImageUtils;
 
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 
-public abstract class Image
+public abstract class Image implements Serializable
 {
 	public int imageX,imageY;
 	
@@ -95,5 +96,6 @@ public abstract class Image
 	public abstract double[] getDataDouble();
 	public abstract float[] getDataFloat();
 	public abstract Image createImage(int X, int Y);
+	public abstract Image transformGauss(Image[] subImages);
 
 }

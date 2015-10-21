@@ -55,4 +55,9 @@ public class ImageDouble extends Image {
 	public Image createImage(int X, int Y) {
 		return new ImageDouble(X, Y);
 	}
+	@Override
+	public Image transformGauss(Image[] subImages) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
