@@ -20,7 +20,8 @@ public class PopulateClustersRunnable implements Runnable {
 	@Override
 	public void run() {
 		for (int i = 0; i<list.size(); i++){
-			List<Integer> clusterList = clusters.get(Cluster.getClosestCLusterIndex(clusters, list.get(i))).members;
+			int closestCLusterIndex = Cluster.getClosestCLusterIndex(clusters, list.get(i));
+			List<Integer> clusterList = clusters.get(closestCLusterIndex).members;
 			synchronized(clusterList){
 				clusterList.add(i+offset);
 			}

@@ -23,7 +23,7 @@ public class Program
 	
 	public Program(String source)
 	{
-        final int platformIndex = 0;
+        final int platformIndex = 1;
         final long deviceType = CL_DEVICE_TYPE_GPU;
         final int deviceIndex = 0;
 

@@ -1,4 +1,3 @@
-#pragma OPENCL EXTENSION cl_khr_fp64 : enable
 #define IMAGE_SIZE  16
 #define NO_CLUSTERS  256
 #define IMAGES_PER_WORK_ITEM  625

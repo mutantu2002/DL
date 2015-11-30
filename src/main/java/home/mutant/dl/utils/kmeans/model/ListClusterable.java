@@ -1,21 +1,26 @@
 package home.mutant.dl.utils.kmeans.model;
 
-import home.mutant.dl.models.Image;
-import home.mutant.dl.ui.ResultFrame;
-
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import home.mutant.dl.models.Image;
+import home.mutant.dl.ui.ResultFrame;
+import home.mutant.dl.utils.Utils;
+
 public class ListClusterable implements Serializable {
 	private static final long serialVersionUID = -3585637517611698740L;
 	public List<Clusterable> clusterables = new ArrayList<Clusterable>();
-	
+	public ListClusterable(){
+	}
+	public ListClusterable(Image[] images){
+		for (int i = 0; i < images.length; i++) {
+			clusterables.add(new SimpleClusterable(images[i].getDataFloat()));
+		}
+	}
 	public void save(String fileName){
 		try{
 			FileOutputStream fileOut =
@@ -30,18 +35,13 @@ public class ListClusterable implements Serializable {
 	}
 	
 	public static ListClusterable load(String fileName){
-		try
-		{
-			FileInputStream fileIn = new FileInputStream(fileName);
-			ObjectInputStream in = new ObjectInputStream(fileIn);
-	        ListClusterable list = (ListClusterable) in.readObject();
-	        in.close();
-	        fileIn.close();
-	        return list;
-		}catch(Exception e){
-			e.printStackTrace();
-			return null;
+		Object obj = Utils.load(fileName);
+		if (obj instanceof ListClusterable){
+			return (ListClusterable)obj;
+		}else if (obj instanceof Image[]){
+			return new ListClusterable((Image[])obj);
 		}
+		return null;
 	}
 	
 	public void show(){

@@ -16,7 +16,7 @@ public class TransformImageClusters {
 		Image[] subImages = (Image[]) Utils.load("clusters7_64");
 		ResultFrame frame = new ResultFrame(600, 600);
 		frame.showImages(Arrays.asList(subImages),(int) Math.sqrt(subImages.length));
-		Image transformed = MnistDatabase.trainImages.get(6).transformGauss(subImages);
+		Image transformed = MnistDatabase.trainImages.get(57).transformGauss(subImages);
 		ResultFrame frame1 = new ResultFrame(600, 600);
 		frame1.showImage(transformed);
 	}

@@ -1,5 +1,7 @@
 package home.mutant.dl.utils.kmeans.model;
 
+import java.util.List;
+
 import home.mutant.dl.models.Image;
 
 public interface Clusterable {
@@ -11,4 +13,5 @@ public interface Clusterable {
 	public Clusterable randomize();
 	public Clusterable copy();
 	public Image getImage();
+	public void updateCenterFromMembers(List<Clusterable> allList, List<Integer> members);
 }

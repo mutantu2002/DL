@@ -2,6 +2,7 @@ package home.mutant.dl.utils.kmeans.runnables;
 
 import home.mutant.dl.utils.ImageUtils;
 import home.mutant.dl.utils.kmeans.model.Clusterable;
+import home.mutant.dl.utils.kmeans.model.Clusterable2D;
 import home.mutant.dl.utils.kmeans.model.ListClusterable;
 import home.mutant.dl.utils.kmeans.model.SimpleClusterable;
 
@@ -31,7 +32,7 @@ public class TransformClusterablesRunnable implements Runnable{
 				SimpleClusterable sc = new SimpleClusterable(dividedImages.get(j));
 				newImage[j] = filters.getClosestClusterIndex( sc);
 			}
-			toTransform.set(i, new SimpleClusterable(newImage,current.getLabel()));
+			toTransform.set(i, new Clusterable2D(newImage,current.getLabel()));
 		}
 		
 	}

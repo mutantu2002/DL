@@ -19,8 +19,9 @@ public class RunMLImageKmeans {
 		for (int i = 0; i < 60000; i++) {
 			clusterables.add(new SimpleClusterable(MnistDatabase.trainImages.get(i).getDataDouble(),MnistDatabase.trainLabels.get(i)));
 		}
-		ListClusterable filters = ListClusterable.load("clusters4.ser");
+		ListClusterable filters = ListClusterable.load("clusters3_256");
 		System.out.println(filters.clusterables.size());
+		System.out.println(filters.clusterables.get(0).getWeights().length);
 		filters.show();
 		Launcher launcher = new Launcher();
 		int step = clusterables.size() / NO_THREADS;
@@ -45,7 +46,7 @@ public class RunMLImageKmeans {
 			launcher.addRunnable(new TransformClusterablesRunnable(clusterablesTest.subList(i*step, (i+1)*step), filters));
 		}
 		launcher.run();
-		
+		System.out.println("Start kmeans");
 		System.out.println(RunImageKmeans.run(clusterables,clusterablesTest));
 	}
 }

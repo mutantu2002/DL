@@ -95,6 +95,7 @@ public class ImageFloat extends Image {
 				s+=(data[y*imageX+x]-t)*(data[y*imageX+x]-t);
 			}
 		}
+		System.out.println(s);
 		float exp = (float) Math.exp(-s/1000000);
 		//System.out.println(exp);
 		return exp*250;//10000000/s;

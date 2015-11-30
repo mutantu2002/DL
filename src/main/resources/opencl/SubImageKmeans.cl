@@ -1,13 +1,14 @@
-#define DIM_FILTER  7
+#define DIM_FILTER  28
 
 #define DIM_IMAGE  28
 #define IMAGE_SIZE  784
 #define FILTER_SIZE  (DIM_FILTER*DIM_FILTER)
 
+#define INFLUENCE 1
 __kernel void updateCenters(__global float *centers, __global float *images, __global float *updates)
 {
 	int imagesOffset = get_global_id(0)*IMAGE_SIZE;
-	int noClusters = 64;
+	int noClusters = 256;
 	
 	int updatesOffset = get_global_id(0)*(FILTER_SIZE+1)*noClusters;
 	int centersIndex=0;
@@ -123,36 +124,26 @@ __kernel void mixCenters2D(__global float *centers,  __global float *updates, co
 	int offsetCenter = get_global_id(0);
 	int filterSize=dimFilter*dimFilter;
 	int centerIndex;
-	float noMean=1;
 	float influence=0;
 	
 	int offsetCenterX=offsetCenter%dimNoClusters;
 	int offsetCenterY=offsetCenter/dimNoClusters;
 	
+	int offsetCenterX1=(offsetCenterX+1)%dimNoClusters;
+	int offsetCenterY1=(offsetCenterY+1)%dimNoClusters;
+	int offsetCenterX_1=(offsetCenterX+dimNoClusters-1)%dimNoClusters;
+	int offsetCenterY_1=(offsetCenterY+dimNoClusters-1)%dimNoClusters;
+	
 	for(centerIndex=0;centerIndex<filterSize;centerIndex++)
 	{
-		noMean=1;
-		influence=0;
-		if (offsetCenterX>0)
-		{
-			influence = influence + updates[(offsetCenterY*dimNoClusters+offsetCenterX-1)*(filterSize+1)+centerIndex];
-			noMean=noMean+1;
-		}
-		if (offsetCenterX<dimNoClusters-1)
-		{
-			influence = influence + updates[(offsetCenterY*dimNoClusters+offsetCenterX+1)*(filterSize+1)+centerIndex];
-			noMean=noMean+1;
-		}
-		if (offsetCenterY>0)
-		{
-			influence = influence + updates[((offsetCenterY-1)*dimNoClusters+offsetCenterX)*(filterSize+1)+centerIndex];
-			noMean=noMean+1;
-		}
-		if (offsetCenterY<dimNoClusters-1)
-		{
-			influence = influence + updates[((offsetCenterY+1)*dimNoClusters+offsetCenterX)*(filterSize+1)+centerIndex];
-			noMean=noMean+1;
-		}
-		centers[offsetCenter*filterSize+centerIndex]=(updates[offsetCenter*(filterSize+1)+centerIndex]+influence)/noMean;
+		influence = updates[(offsetCenterY*dimNoClusters+offsetCenterX1)*(filterSize+1)+centerIndex];
+
+		influence = influence + updates[(offsetCenterY*dimNoClusters+offsetCenterX_1)*(filterSize+1)+centerIndex];
+
+		influence = influence + updates[(offsetCenterY1*dimNoClusters+offsetCenterX)*(filterSize+1)+centerIndex];
+
+		influence = influence + updates[(offsetCenterY_1*dimNoClusters+offsetCenterX)*(filterSize+1)+centerIndex];
+
+		centers[offsetCenter*filterSize+centerIndex]=(INFLUENCE*updates[offsetCenter*(filterSize+1)+centerIndex]+influence)/(INFLUENCE+4);
 	}
 }

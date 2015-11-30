@@ -15,7 +15,7 @@ public class Kmeans
 	private static final int NO_ITERATIONS = 10;
 	private static final int NO_THREADS = 8;
 	private static final int INFLUENCE = 1;
-	private static final double MIN_DISTANCE_TO_ADD = 100;
+	private static final double MIN_DISTANCE_TO_ADD = 10;
 	public static List<Cluster> run(List<Clusterable> list, int noClusters)
 	{
 		return run(list, noClusters, false);

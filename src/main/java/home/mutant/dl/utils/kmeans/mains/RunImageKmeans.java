@@ -27,7 +27,7 @@ public class RunImageKmeans {
 	}
 	
 	public static int run(List<Clusterable> train, List<Clusterable> test){
-		List<Cluster> clusters = Kmeans.run(train, 1000,true);
+		List<Cluster> clusters = Kmeans.run(train, 320,true);
 		Cluster.showCenters(clusters);
 		System.out.println("No centers "+clusters.size());
 		Kmeans.updateClusterableLabelFromCenters(test, clusters);

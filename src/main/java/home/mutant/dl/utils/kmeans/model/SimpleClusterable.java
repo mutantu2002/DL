@@ -1,6 +1,8 @@
 package home.mutant.dl.utils.kmeans.model;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 import home.mutant.dl.models.Image;
 import home.mutant.dl.models.ImageDouble;
@@ -15,6 +17,12 @@ public class SimpleClusterable implements Clusterable,Serializable {
 	}
 	public SimpleClusterable(double[] weights) {
 		this.weights = weights;
+	}
+	public SimpleClusterable(float[] weights) {
+		this(weights.length);
+		for (int i = 0; i < weights.length; i++) {
+			this.weights[i]=weights[i];
+		}
 	}
 	public SimpleClusterable(double[] weights, int label) {
 		this(weights);
@@ -83,5 +91,17 @@ public class SimpleClusterable implements Clusterable,Serializable {
 	@Override
 	public void setWeights(double[] weights) {
 		this.weights = weights;
+	}
+	@Override
+	public void updateCenterFromMembers(List<Clusterable> allList, List<Integer> cluster) {
+		for(int w=0; w<weights.length; w++)
+		{
+			weights[w]=0;
+			for (int i = 0; i<cluster.size(); i++)
+			{
+				weights[w]+=allList.get(cluster.get(i)).getWeights()[w];
+			}
+			weights[w]/=cluster.size();
+		}
 	}
 }

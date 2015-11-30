@@ -1,10 +1,9 @@
 package home.mutant.dl.utils.kmeans.runnables;
 
+import java.util.List;
+
 import home.mutant.dl.utils.kmeans.model.Cluster;
 import home.mutant.dl.utils.kmeans.model.Clusterable;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class UpdateClusterRunnable implements Runnable {
 	List<Clusterable> list;
@@ -22,17 +21,7 @@ public class UpdateClusterRunnable implements Runnable {
 			List<Integer> cluster = clusters.get(j).members;
 			if (cluster.size()==0) continue;
 			Clusterable center = clusters.get(j).center;
-			double[] centerWeights = center.getWeights();
-			Arrays.fill(centerWeights, 0);
-			
-			for(int w=0; w<centerWeights.length; w++)
-			{
-				for (int i = 0; i<cluster.size(); i++)
-				{
-					centerWeights[w]+=list.get(cluster.get(i)).getWeights()[w];
-				}
-				centerWeights[w]/=cluster.size();
-			}
+			center.updateCenterFromMembers(list, cluster);
 		}
 
 	}

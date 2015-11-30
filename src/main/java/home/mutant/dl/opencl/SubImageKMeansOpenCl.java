@@ -1,10 +1,12 @@
 package home.mutant.dl.opencl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import home.mutant.dl.models.Image;
-import home.mutant.dl.models.ImageDouble;
 import home.mutant.dl.models.ImageFloat;
 import home.mutant.dl.opencl.model.Kernel;
-import home.mutant.dl.opencl.model.MemoryDouble;
 import home.mutant.dl.opencl.model.MemoryFloat;
 import home.mutant.dl.opencl.model.Program;
 import home.mutant.dl.ui.ResultFrame;
@@ -12,17 +14,13 @@ import home.mutant.dl.utils.MnistDatabase;
 import home.mutant.dl.utils.MnistDatabase.TYPE;
 import home.mutant.dl.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public class SubImageKMeansOpenCl {
-	public static final int DIM_FILTER = 7;
-	public static final int NO_CLUSTERS = 64;
-	public static final int WORK_ITEMS = 1280;
-	public static final int NO_ITERATIONS = 20;
+	public static final int DIM_FILTER = 28;
+	public static final int NO_CLUSTERS = 256;
+	public static final int WORK_ITEMS = 256;
+	public static final int NO_ITERATIONS = 50;
 	
-	public static final int WORK_GROUP_SIZE = 64;
+	public static final int WORK_GROUP_SIZE = 256;
 	
 	public static final int DIM_IMAGE = 28;
 	public static final int NO_MNIST_IMAGES = 60000;
@@ -81,9 +79,9 @@ public class SubImageKMeansOpenCl {
 				program.finish();
 				tTotal+=System.currentTimeMillis()-t0;
 			}
-			reduceCenters.run(NO_CLUSTERS, WORK_GROUP_SIZE);
+			reduceCenters.run(NO_CLUSTERS, WORK_GROUP_SIZE>NO_CLUSTERS?NO_CLUSTERS:WORK_GROUP_SIZE);
 			program.finish();
-			mixCenters.run(NO_CLUSTERS, WORK_GROUP_SIZE);
+			mixCenters.run(NO_CLUSTERS, WORK_GROUP_SIZE>NO_CLUSTERS?NO_CLUSTERS:WORK_GROUP_SIZE);
 			program.finish();
 			System.out.println("Iteration "+iteration);
 		}
@@ -108,7 +106,7 @@ public class SubImageKMeansOpenCl {
 		ResultFrame frame = new ResultFrame(600, 600);
 		frame.showImages(imgClusters,dimNoClusters);
 		
-		Utils.save("clusters7_64", imgClusters.toArray(new Image[0]));
+		Utils.save("clusters"+DIM_FILTER+"_"+NO_CLUSTERS, imgClusters.toArray(new Image[0]));
 		memClusters.release();
 		memImages.release();
 		memUpdates.release();
