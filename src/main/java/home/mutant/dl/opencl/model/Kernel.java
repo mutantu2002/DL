@@ -20,6 +20,13 @@ public class Kernel {
 		clSetKernelArg(clKernel, index, Sizeof.cl_mem, Pointer.to(memory.gemMemObject()));
 	}
 	
+	public void setArgument(MemoryFloat memory, int index){
+		clSetKernelArg(clKernel, index, Sizeof.cl_mem, Pointer.to(memory.gemMemObject()));
+	}
+	
+	public void setArgument(MemoryInt memory, int index){
+		clSetKernelArg(clKernel, index, Sizeof.cl_mem, Pointer.to(memory.gemMemObject()));
+	}	
 	public void setArgument(int value, int index){
 		clSetKernelArg(clKernel, index, Sizeof.cl_int, Pointer.to(new int[]{ value }));
 	}
