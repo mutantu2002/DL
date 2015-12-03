@@ -16,7 +16,7 @@ import home.mutant.dl.utils.MnistDatabase.TYPE;
 public class KMeansOpenCl2 {
 	public static final int NO_CLUSTERS = 256;
 	public static final int WORK_ITEMS = 2560;
-	public static final int NO_ITERATIONS = 5;
+	public static final int NO_ITERATIONS = 20;
 	public static final int IMAGE_SIZE = 784;
 	
 	public static void main(String[] args) throws Exception {
@@ -54,24 +54,25 @@ public class KMeansOpenCl2 {
 		reduceCenters.setArgument(memUpdates,2);
 		
 		long tTotal=0;
-
+		for (int i=0;i<WORK_ITEMS;i++){
+			System.arraycopy(MnistDatabase.trainImages.get(i).getDataFloat(), 0, images, i*(IMAGE_SIZE), IMAGE_SIZE);
+		}
+		memImages.copyHtoD();
+		
 		for (int iteration=0;iteration<NO_ITERATIONS;iteration++){
-			for (int i=0;i<WORK_ITEMS;i++){
-				System.arraycopy(MnistDatabase.trainImages.get(i).getDataFloat(), 0, images, i*(IMAGE_SIZE), IMAGE_SIZE);
-			}
 			long t0 = System.currentTimeMillis();
-			memImages.copyHtoD();
+			
 			updateCenters.run(WORK_ITEMS, 256);
 			program.finish();
 			reduceCenters.run(NO_CLUSTERS, 256);
 			program.finish();
+			
 			tTotal+=System.currentTimeMillis()-t0;
-
 			System.out.println("Iteration "+iteration);
 		}
-		memUpdates.copyDtoH();
-
 		System.out.println("Time in kernel per iteration " + tTotal/1000./NO_ITERATIONS);
+		
+		memUpdates.copyDtoH();
 		memClusters.copyDtoH();
 		List<Image> imagesClusters = new ArrayList<Image>();
 		for (int i=0;i<NO_CLUSTERS;i++) {
