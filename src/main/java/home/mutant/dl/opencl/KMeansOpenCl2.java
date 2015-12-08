@@ -14,9 +14,9 @@ import home.mutant.dl.utils.MnistDatabase;
 import home.mutant.dl.utils.MnistDatabase.TYPE;
 
 public class KMeansOpenCl2 {
-	public static final int NO_CLUSTERS = 256;
-	public static final int WORK_ITEMS = 2560;
-	public static final int NO_ITERATIONS = 20;
+	public static final int NO_CLUSTERS = 128;
+	public static final int WORK_ITEMS = 60000;
+	public static final int NO_ITERATIONS = 5;
 	public static final int IMAGE_SIZE = 784;
 	
 	public static void main(String[] args) throws Exception {
@@ -27,9 +27,7 @@ public class KMeansOpenCl2 {
 		float[] images= new float[IMAGE_SIZE*WORK_ITEMS];
 		
 		float[] clustersCenters = new float[IMAGE_SIZE*NO_CLUSTERS];
-		for (int i = 0; i < clustersCenters.length; i++) {
-			clustersCenters[i] = (float) (Math.random()*256);
-		}
+		randomizeCentersFromImages(clustersCenters);
 		int[] clustersUpdates = new int[WORK_ITEMS];
 		
 		Program program = new Program(Program.readResource("/opencl/Kmeans2.cl"));
@@ -64,10 +62,11 @@ public class KMeansOpenCl2 {
 			
 			updateCenters.run(WORK_ITEMS, 256);
 			program.finish();
+			tTotal+=System.currentTimeMillis()-t0;
 			reduceCenters.run(NO_CLUSTERS, 256);
 			program.finish();
 			
-			tTotal+=System.currentTimeMillis()-t0;
+			
 			System.out.println("Iteration "+iteration);
 		}
 		System.out.println("Time in kernel per iteration " + tTotal/1000./NO_ITERATIONS);
@@ -87,5 +86,16 @@ public class KMeansOpenCl2 {
 		memUpdates.release();
 		updateCenters.release();
 		program.release();
+	}
+
+	private static void randomizeCenters(float[] clustersCenters) {
+		for (int i = 0; i < clustersCenters.length; i++) {
+			clustersCenters[i] = (float) (Math.random()*256);
+		}
+	}
+	private static void randomizeCentersFromImages(float[] clustersCenters) {
+		for (int i=0;i<NO_CLUSTERS;i++){
+			System.arraycopy(MnistDatabase.trainImages.get((int) (Math.random()*WORK_ITEMS)).getDataFloat(), 0, clustersCenters, i*(IMAGE_SIZE), IMAGE_SIZE);
+		}
 	}
 }

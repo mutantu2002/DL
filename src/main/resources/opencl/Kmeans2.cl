@@ -1,8 +1,8 @@
 #define IMAGE_SIZE  784
-#define NO_CLUSTERS  256
-#define NO_IMAGES 2560
+#define NO_CLUSTERS  128
+#define NO_IMAGES 60000
 
-__kernel void updateCenters(__global float *centers, __global float *images, __global int *updates)
+__kernel void updateCenters(__global float *centers, __global const float *images, __global int *updates)
 {
 	int gid = get_global_id(0);
 	int imagesOffset = gid*IMAGE_SIZE;
@@ -34,7 +34,7 @@ __kernel void updateCenters(__global float *centers, __global float *images, __g
 	updates[gid]=minCenterIndex;
 }
 
-__kernel void reduceCenters(__global float *centers, __global float *images, __global int *updates)
+__kernel void reduceCenters(__global float *centers, __global const float *images, __global int *updates)
 {
 	int offsetCenter = get_global_id(0);
 	float centerBuffer[IMAGE_SIZE];

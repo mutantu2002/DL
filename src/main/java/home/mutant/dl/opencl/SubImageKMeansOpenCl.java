@@ -15,10 +15,10 @@ import home.mutant.dl.utils.MnistDatabase.TYPE;
 import home.mutant.dl.utils.Utils;
 
 public class SubImageKMeansOpenCl {
-	public static final int DIM_FILTER = 28;
+	public static final int DIM_FILTER = 4;
 	public static final int NO_CLUSTERS = 256;
-	public static final int WORK_ITEMS = 256;
-	public static final int NO_ITERATIONS = 50;
+	public static final int WORK_ITEMS = 256*10;
+	public static final int NO_ITERATIONS = 5;
 	
 	public static final int WORK_GROUP_SIZE = 256;
 	

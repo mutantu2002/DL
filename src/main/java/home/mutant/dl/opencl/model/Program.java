@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.util.Scanner;
 
 import org.jocl.CL;
+import org.jocl.Pointer;
+import org.jocl.Sizeof;
 import org.jocl.cl_command_queue;
 import org.jocl.cl_context;
 import org.jocl.cl_context_properties;
@@ -23,7 +25,7 @@ public class Program
 	
 	public Program(String source)
 	{
-        final int platformIndex = 1;
+        final int platformIndex = 0;
         final long deviceType = CL_DEVICE_TYPE_GPU;
         final int deviceIndex = 0;
 
@@ -54,6 +56,9 @@ public class Program
         clGetDeviceIDs(platform, deviceType, numDevices, devices, null);
         cl_device_id device = devices[deviceIndex];
 
+        long[] size=new long[1];
+        clGetDeviceInfo(device, CL_DEVICE_MAX_WORK_GROUP_SIZE, Sizeof.cl_ulong, Pointer.to(size), null);
+        
         clContext = clCreateContext(contextProperties, 1, new cl_device_id[]{device}, null, null, null);
         clCommandQueue = clCreateCommandQueue(clContext, device, 0, null);
         clProgram = clCreateProgramWithSource(clContext, 1, new String[]{ source }, null, null);
