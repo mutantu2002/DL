@@ -1,10 +1,10 @@
-#define DIM_FILTER  28
+#define DIM_FILTER  4
 
 #define DIM_IMAGE  28
 #define IMAGE_SIZE  784
 #define FILTER_SIZE  (DIM_FILTER*DIM_FILTER)
 
-#define INFLUENCE 1
+#define INFLUENCE 10
 __kernel void updateCenters(__global float *centers, __global float *images, __global float *updates)
 {
 	int imagesOffset = get_global_id(0)*IMAGE_SIZE;
