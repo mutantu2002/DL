@@ -19,7 +19,7 @@ public class RunMLImageKmeans {
 		for (int i = 0; i < 60000; i++) {
 			clusterables.add(new SimpleClusterable(MnistDatabase.trainImages.get(i).getDataDouble(),MnistDatabase.trainLabels.get(i)));
 		}
-		ListClusterable filters = ListClusterable.load("clusters3_256");
+		ListClusterable filters = ListClusterable.load("clusters4_1024");
 		System.out.println(filters.clusterables.size());
 		System.out.println(filters.clusterables.get(0).getWeights().length);
 		filters.show();

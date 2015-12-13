@@ -6,7 +6,7 @@ import home.mutant.dl.models.Image;
 
 public class Clusterable2D extends SimpleClusterable {
 	private static final long serialVersionUID = -996388060421011310L;
-	private static final int DIM=16;
+	private static final int DIM=32;
 	public short[][] weights2d;
 	public Clusterable2D(double[] weights) {
 		super(weights);

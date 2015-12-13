@@ -16,9 +16,9 @@ import home.mutant.dl.utils.Utils;
 
 public class SubImageKMeansOpenCl {
 	public static final int DIM_FILTER = 4;
-	public static final int NO_CLUSTERS = 256;
-	public static final int WORK_ITEMS = 60000;
-	public static final int NO_ITERATIONS = 50;
+	public static final int NO_CLUSTERS = 1024;
+	public static final int WORK_ITEMS = 30000;
+	public static final int NO_ITERATIONS = 40;
 	
 	public static final int WORK_GROUP_SIZE = 256;
 	

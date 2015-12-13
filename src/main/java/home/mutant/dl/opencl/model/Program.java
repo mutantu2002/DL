@@ -4,6 +4,7 @@ import static org.jocl.CL.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Scanner;
 
 import org.jocl.CL;
@@ -24,6 +25,10 @@ public class Program
 	cl_context clContext;
 	
 	public Program(String source)
+	{
+		this(source,null);
+	}
+	public Program(String source, Map<String, Integer> params)
 	{
         final int platformIndex = 0;
         final long deviceType = CL_DEVICE_TYPE_GPU;
@@ -62,7 +67,14 @@ public class Program
         clContext = clCreateContext(contextProperties, 1, new cl_device_id[]{device}, null, null, null);
         clCommandQueue = clCreateCommandQueue(clContext, device, 0, null);
         clProgram = clCreateProgramWithSource(clContext, 1, new String[]{ source }, null, null);
-        clBuildProgram(clProgram, 0, null, null, null, null);
+        String options=null;
+        if(params!=null){
+        	options="";
+        	for(String param:params.keySet()){
+        		options+="-D"+param+"="+params.get(param).toString()+" ";
+        	}
+        }
+        clBuildProgram(clProgram, 0, null, options, null, null);
 	}
 	
 	public void release()

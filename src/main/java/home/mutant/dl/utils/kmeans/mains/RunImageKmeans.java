@@ -12,6 +12,7 @@ import java.util.List;
 
 public class RunImageKmeans {
 	public static void main(String[] args) throws Exception {
+		long t0 = System.currentTimeMillis();
 		MnistDatabase.loadImages();
 		List<Clusterable> clusterables = new ArrayList<Clusterable>();
 		for (int i = 0; i < 60000; i++) {
@@ -24,6 +25,8 @@ public class RunImageKmeans {
 		}
 
 		System.out.println(run(clusterables,clusterablesTest));
+		long tTotal=System.currentTimeMillis()-t0;
+		System.out.println("Time (sec) per iteration " + tTotal/1000./Kmeans.NO_ITERATIONS);
 	}
 	
 	public static int run(List<Clusterable> train, List<Clusterable> test){

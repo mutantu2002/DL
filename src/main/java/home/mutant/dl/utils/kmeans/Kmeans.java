@@ -12,7 +12,7 @@ import java.util.List;
 
 public class Kmeans
 {
-	private static final int NO_ITERATIONS = 10;
+	public static final int NO_ITERATIONS = 20;
 	private static final int NO_THREADS = 8;
 	private static final int INFLUENCE = 1;
 	private static final double MIN_DISTANCE_TO_ADD = 10;
@@ -57,7 +57,7 @@ public class Kmeans
 		}
 		
 	}
-	private static int getMaxKeyHash(HashMap<Integer, Integer> numbers){
+	public static int getMaxKeyHash(HashMap<Integer, Integer> numbers){
 		int max = Integer.MIN_VALUE;
 		int maxKey=-1;
 		for (Integer key:numbers.keySet()) {

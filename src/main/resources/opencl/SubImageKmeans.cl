@@ -4,11 +4,11 @@
 #define IMAGE_SIZE  784
 #define FILTER_SIZE  (DIM_FILTER*DIM_FILTER)
 
-#define INFLUENCE 10
+#define INFLUENCE 1
 __kernel void updateCenters(__global float *centers, __global float *images, __global float *updates)
 {
 	int imagesOffset = get_global_id(0)*IMAGE_SIZE;
-	int noClusters = 256;
+	int noClusters = 1024;
 	
 	int updatesOffset = get_global_id(0)*(FILTER_SIZE+1)*noClusters;
 	int centersIndex=0;

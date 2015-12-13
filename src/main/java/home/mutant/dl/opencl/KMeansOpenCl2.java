@@ -1,7 +1,10 @@
 package home.mutant.dl.opencl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import home.mutant.dl.models.Image;
 import home.mutant.dl.models.ImageFloat;
@@ -12,11 +15,12 @@ import home.mutant.dl.opencl.model.Program;
 import home.mutant.dl.ui.ResultFrame;
 import home.mutant.dl.utils.MnistDatabase;
 import home.mutant.dl.utils.MnistDatabase.TYPE;
+import home.mutant.dl.utils.kmeans.Kmeans;
 
 public class KMeansOpenCl2 {
-	public static final int NO_CLUSTERS = 128;
+	public static final int NO_CLUSTERS = 256;
 	public static final int WORK_ITEMS = 60000;
-	public static final int NO_ITERATIONS = 5;
+	public static final int NO_ITERATIONS = 10;
 	public static final int IMAGE_SIZE = 784;
 	
 	public static void main(String[] args) throws Exception {
@@ -30,7 +34,9 @@ public class KMeansOpenCl2 {
 		randomizeCentersFromImages(clustersCenters);
 		int[] clustersUpdates = new int[WORK_ITEMS];
 		
-		Program program = new Program(Program.readResource("/opencl/Kmeans2.cl"));
+		Map<String, Integer> params = new HashMap<>();
+		params.put("imageSize", IMAGE_SIZE);
+		Program program = new Program(Program.readResource("/opencl/Kmeans2.cl"),params);		
 		
 		MemoryFloat memClusters = new MemoryFloat(program);
 		memClusters.addReadWrite(clustersCenters);
@@ -40,16 +46,19 @@ public class KMeansOpenCl2 {
 		
 		MemoryInt memUpdates = new MemoryInt(program);
 		memUpdates.addReadWrite(clustersUpdates);
-		
+
 		Kernel updateCenters = new Kernel(program, "updateCenters");
 		updateCenters.setArgument(memClusters,0);
 		updateCenters.setArgument(memImages,1);
 		updateCenters.setArgument(memUpdates,2);
+		updateCenters.setArgument(NO_CLUSTERS, 3);
+		
 		
 		Kernel reduceCenters = new Kernel(program, "reduceCenters");
 		reduceCenters.setArgument(memClusters,0);
 		reduceCenters.setArgument(memImages,1);
 		reduceCenters.setArgument(memUpdates,2);
+		reduceCenters.setArgument(WORK_ITEMS, 3);
 		
 		long tTotal=0;
 		for (int i=0;i<WORK_ITEMS;i++){
@@ -62,10 +71,9 @@ public class KMeansOpenCl2 {
 			
 			updateCenters.run(WORK_ITEMS, 256);
 			program.finish();
-			tTotal+=System.currentTimeMillis()-t0;
 			reduceCenters.run(NO_CLUSTERS, 256);
 			program.finish();
-			
+			tTotal+=System.currentTimeMillis()-t0;
 			
 			System.out.println("Iteration "+iteration);
 		}
@@ -73,6 +81,31 @@ public class KMeansOpenCl2 {
 		
 		memUpdates.copyDtoH();
 		memClusters.copyDtoH();
+		
+		memClusters.release();
+		memImages.release();
+		memUpdates.release();
+		updateCenters.release();
+		program.release();
+		
+		List<HashMap<Integer, Integer>> clusterHash = new ArrayList<>();
+		for (int i=0;i<NO_CLUSTERS;i++) {
+			clusterHash.add(new HashMap<>());
+		}
+		for (int i=0;i<WORK_ITEMS;i++){
+			int currentClusterIndex = clustersUpdates[i];
+			int currentLabel = MnistDatabase.trainLabels.get(i);
+			HashMap<Integer, Integer> currentMembers =  clusterHash.get(currentClusterIndex);
+			if (currentMembers.get(currentLabel)==null){
+				currentMembers.put(currentLabel, 0);
+			}
+			currentMembers.put(currentLabel, currentMembers.get(currentLabel)+1);
+		}
+		List<Integer> clusterLabels = new ArrayList<>();
+		for (int i=0;i<NO_CLUSTERS;i++) {
+			clusterLabels.add(Kmeans.getMaxKeyHash(clusterHash.get(i)));
+		}
+		System.out.println(Arrays.toString(clusterLabels.toArray()));
 		List<Image> imagesClusters = new ArrayList<Image>();
 		for (int i=0;i<NO_CLUSTERS;i++) {
 			Image image = new ImageFloat(IMAGE_SIZE);
@@ -81,11 +114,7 @@ public class KMeansOpenCl2 {
 		}
 		ResultFrame frame = new ResultFrame(600, 600);
 		frame.showImages(imagesClusters);
-		memClusters.release();
-		memImages.release();
-		memUpdates.release();
-		updateCenters.release();
-		program.release();
+
 	}
 
 	private static void randomizeCenters(float[] clustersCenters) {
