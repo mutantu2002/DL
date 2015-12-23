@@ -8,7 +8,7 @@
 __kernel void updateCenters(__global float *centers, __global float *images, __global float *updates)
 {
 	int imagesOffset = get_global_id(0)*IMAGE_SIZE;
-	int noClusters = 1024;
+	int noClusters = 256;
 	
 	int updatesOffset = get_global_id(0)*(FILTER_SIZE+1)*noClusters;
 	int centersIndex=0;
@@ -102,20 +102,8 @@ __kernel void mixCenters(__global float *centers,  __global float *updates, cons
 
 	for(centerIndex=0;centerIndex<filterSize;centerIndex++)
 	{
-		noMean=1;
-		influence=0;
-		if (offsetCenter>0)
-		{
-			influence = influence + updates[(offsetCenter-1)*(filterSize+1)+centerIndex];
-			noMean=noMean+1;
-		}
-		if (offsetCenter<noClusters-1)
-		{
-			influence = influence + updates[(offsetCenter+1)*(filterSize+1)+centerIndex];
-			noMean=noMean+1;
-		}
-		centers[offsetCenter*filterSize+centerIndex]=(updates[offsetCenter*(filterSize+1)+centerIndex]+influence)/noMean;
-		//centers[offsetCenter*filterSize+centerIndex]=updates[offsetCenter*(filterSize+1)+centerIndex];
+
+		centers[offsetCenter*filterSize+centerIndex]=updates[offsetCenter*(filterSize+1)+centerIndex];
 	}
 }
 

@@ -2,6 +2,7 @@ package home.mutant.dl.utils.kmeans.mains;
 
 import home.mutant.dl.utils.MnistDatabase;
 import home.mutant.dl.utils.kmeans.model.Clusterable;
+import home.mutant.dl.utils.kmeans.model.ClusterablePreDistance;
 import home.mutant.dl.utils.kmeans.model.ListClusterable;
 import home.mutant.dl.utils.kmeans.model.SimpleClusterable;
 import home.mutant.dl.utils.kmeans.runnables.TransformClusterablesRunnable;
@@ -19,10 +20,11 @@ public class RunMLImageKmeans {
 		for (int i = 0; i < 60000; i++) {
 			clusterables.add(new SimpleClusterable(MnistDatabase.trainImages.get(i).getDataDouble(),MnistDatabase.trainLabels.get(i)));
 		}
-		ListClusterable filters = ListClusterable.load("clusters4_1024");
+		ListClusterable filters = ListClusterable.load("clusters4_256");
 		System.out.println(filters.clusterables.size());
 		System.out.println(filters.clusterables.get(0).getWeights().length);
 		filters.show();
+		fillPreDistances(filters);
 		Launcher launcher = new Launcher();
 		int step = clusterables.size() / NO_THREADS;
 		
@@ -48,5 +50,14 @@ public class RunMLImageKmeans {
 		launcher.run();
 		System.out.println("Start kmeans");
 		System.out.println(RunImageKmeans.run(clusterables,clusterablesTest));
+	}
+	
+	private static void fillPreDistances(ListClusterable filters){
+		ClusterablePreDistance.preDistances = new double[filters.clusterables.size()][filters.clusterables.size()];
+		for (int i=0;i<filters.clusterables.size();i++){
+			for (int j=0;j<filters.clusterables.size();j++){
+				ClusterablePreDistance.preDistances[i][j]=filters.clusterables.get(i).d(filters.clusterables.get(j));
+			}
+		}
 	}
 }

@@ -13,7 +13,7 @@ public class ResultFrame extends JFrame
 	private int width = 800;
     private int height = 600;
     
-    RasterPanel drawingPanel;
+    public RasterPanel drawingPanel;
     
     public ResultFrame(int width, int height,int x, int y, String title)
     {
