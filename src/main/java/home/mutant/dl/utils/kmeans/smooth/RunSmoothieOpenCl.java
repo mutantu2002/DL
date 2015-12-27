@@ -13,8 +13,8 @@ public class RunSmoothieOpenCl {
 		for(int i=0;i<FRAMES;i++){
 			sm.stepV();
 			sm.stepX();
-			//if(i%1000==0)
-			//	sm.show();
+			if(i%1000==0)
+				sm.show();
 			if(i%1000==0)System.out.println(i);
 		}
 		System.out.println("FPS:" + (1000.*FRAMES/(System.currentTimeMillis()-t0)));

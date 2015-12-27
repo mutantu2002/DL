@@ -62,7 +62,7 @@ public class LinkedClusterablesOpenCl {
 		memVy.addReadWrite(vy);
 		
 		memPredistances = new MemoryDouble(program);
-		memPredistances.addReadWrite(preDistances);
+		memPredistances.addReadOnly(preDistances);
 		
 		stepV = new Kernel(program, "stepV");
 		stepV.setArguments(memX,memY,memVx, memVy, memPredistances);
