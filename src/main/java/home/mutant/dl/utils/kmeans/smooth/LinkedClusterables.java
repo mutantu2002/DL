@@ -2,7 +2,6 @@ package home.mutant.dl.utils.kmeans.smooth;
 
 import home.mutant.dl.ui.ResultFrame;
 import home.mutant.dl.utils.kmeans.model.Clusterable;
-import home.mutant.dl.utils.kmeans.model.ClusterablePreDistance;
 import home.mutant.dl.utils.kmeans.model.ListClusterable;
 
 public class LinkedClusterables {

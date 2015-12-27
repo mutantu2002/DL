@@ -34,7 +34,7 @@ public class KMeansOpenCl2 {
 		randomizeCentersFromImages(clustersCenters);
 		int[] clustersUpdates = new int[WORK_ITEMS];
 		
-		Map<String, Integer> params = new HashMap<>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("imageSize", IMAGE_SIZE);
 		Program program = new Program(Program.readResource("/opencl/Kmeans2.cl"),params);		
 		

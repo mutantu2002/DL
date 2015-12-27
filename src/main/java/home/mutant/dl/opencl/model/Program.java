@@ -28,7 +28,7 @@ public class Program
 	{
 		this(source,null);
 	}
-	public Program(String source, Map<String, Integer> params)
+	public Program(String source, Map<String, Object> params)
 	{
         final int platformIndex = 0;
         final long deviceType = CL_DEVICE_TYPE_GPU;
