@@ -3,7 +3,7 @@ package home.mutant.dl.utils.kmeans.smooth;
 import home.mutant.dl.utils.kmeans.model.ListClusterable;
 
 public class RunSmoothieOpenCl {
-	public static final int FRAMES = 20000;
+	public static final int FRAMES = 1;
 	public static void main(String[] args) {
 		
 		ListClusterable filters = ListClusterable.load("clusters4_256");
@@ -12,7 +12,7 @@ public class RunSmoothieOpenCl {
 		long t0 = System.currentTimeMillis();
 		for(int i=0;i<FRAMES;i++){
 			sm.stepV();
-			sm.stepX();
+			//sm.stepX();
 			if(i%1000==0)
 				sm.show();
 			if(i%1000==0)System.out.println(i);
