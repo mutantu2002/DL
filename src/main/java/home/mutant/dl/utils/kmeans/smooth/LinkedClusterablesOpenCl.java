@@ -19,7 +19,7 @@ public class LinkedClusterablesOpenCl {
 	double[] vy;
 	double dt=0.0002;
 	double K=1;
-	double friction=0.3;
+	double friction=0.1;
 	
 	ResultFrame frame;
 	private MemoryDouble memX;
@@ -28,7 +28,6 @@ public class LinkedClusterablesOpenCl {
 	private MemoryDouble memVy;
 	private MemoryDouble memPredistances;
 	private Kernel stepV;
-	private Kernel stepX;
 	private Program program;
 	
 	public LinkedClusterablesOpenCl(ListClusterable clusterables) {
@@ -67,9 +66,6 @@ public class LinkedClusterablesOpenCl {
 		stepV = new Kernel(program, "stepV");
 		stepV.setArguments(memX,memY,memVx, memVy, memPredistances);
 		
-		stepX = new Kernel(program, "stepX");
-		stepX.setArguments(memX,memY,memVx, memVy);
-		
 	}
 	private  void fillPreDistances(){
 		int size = filters.clusterables.size();
@@ -100,11 +96,7 @@ public class LinkedClusterablesOpenCl {
 		frame.repaint();
 	}
 	
-	public void stepX(){
-		stepX.run(filters.clusterables.size(), 256);
-		program.finish();
-	}
-	
+
 	public void stepV(){
 		stepV.run(filters.clusterables.size(), 256);
 		program.finish();
@@ -133,7 +125,6 @@ public class LinkedClusterablesOpenCl {
 		memVy.release();
 		memPredistances.release();
 		stepV.release();
-		stepX.release();
 		program.release();
 	}
 }
