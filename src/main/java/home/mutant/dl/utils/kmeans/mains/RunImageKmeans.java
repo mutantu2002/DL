@@ -12,10 +12,9 @@ import java.util.List;
 
 public class RunImageKmeans {
 	public static void main(String[] args) throws Exception {
-		long t0 = System.currentTimeMillis();
 		MnistDatabase.loadImages();
 		List<Clusterable> clusterables = new ArrayList<Clusterable>();
-		for (int i = 0; i < 60000; i++) {
+		for (int i = 0; i < 30000; i++) {
 			clusterables.add(new SimpleClusterable(MnistDatabase.trainImages.get(i).getDataDouble(),MnistDatabase.trainLabels.get(i)));
 		}
 		
@@ -25,12 +24,14 @@ public class RunImageKmeans {
 		}
 
 		System.out.println(run(clusterables,clusterablesTest));
-		long tTotal=System.currentTimeMillis()-t0;
-		System.out.println("Time (sec) per iteration " + tTotal/1000./Kmeans.NO_ITERATIONS);
+
 	}
 	
 	public static int run(List<Clusterable> train, List<Clusterable> test){
+		long t0 = System.currentTimeMillis();
 		List<Cluster> clusters = Kmeans.run(train, 256,true);
+		long tTotal=System.currentTimeMillis()-t0;
+		System.out.println("Time (sec) per iteration " + tTotal/1000./Kmeans.NO_ITERATIONS);
 		Cluster.showCenters(clusters);
 		System.out.println("No centers "+clusters.size());
 		Kmeans.updateClusterableLabelFromCenters(test, clusters);

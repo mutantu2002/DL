@@ -9,15 +9,21 @@ __kernel void updateCenters(__global float *centers, __global const float *image
 	float weight;
 	float min;
 	int minCenterIndex=-1;
-	imagesOffset = gid*imageSize;
+	float pImage[imageSize];
 	
-	min=78400000;
+	imagesOffset = gid*imageSize;
+	for (index=0;index<imageSize;index++){
+		pImage[index]=images[imagesOffset+index];
+	}
+	
+	
+	min=FLT_MAX;
 	for(centersIndex=0;centersIndex<noClusters;centersIndex++)
 	{
 		sum = 0;
 		for(index=0;index<imageSize;index++)
 		{
-			weight = centers[centersIndex*imageSize+index]-images[imagesOffset+index];
+			weight = centers[centersIndex*imageSize+index]-pImage[index];
 			sum = sum+weight*weight;
 		}
 		if (sum<min)

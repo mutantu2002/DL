@@ -62,7 +62,7 @@ public class Program
         cl_device_id device = devices[deviceIndex];
 
         long[] size=new long[1];
-        clGetDeviceInfo(device, CL_DEVICE_MAX_WORK_GROUP_SIZE, Sizeof.cl_ulong, Pointer.to(size), null);
+        clGetDeviceInfo(device, CL_DEVICE_LOCAL_MEM_SIZE, Sizeof.cl_ulong, Pointer.to(size), null);
         
         clContext = clCreateContext(contextProperties, 1, new cl_device_id[]{device}, null, null, null);
         clCommandQueue = clCreateCommandQueue(clContext, device, 0, null);
