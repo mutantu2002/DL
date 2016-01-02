@@ -38,18 +38,11 @@ __kernel void updateCenters(__global float *centers, __global const float *image
 __kernel void reduceCenters(__global float *centers, __global const float *images, __global int *updates, const int noImages)
 {
 	int offsetCenter = get_global_id(0);
-	float centerBuffer[784];
 	int centerIndex;
 	int indexImage;
 	int noMembers=0;
 	int imageOffset;
-	
 	int offsetSizeCenter=offsetCenter*imageSize;
-	
-	for(centerIndex=0;centerIndex<imageSize;centerIndex++)
-	{
-		centerBuffer[centerIndex]=0;
-	}
 	
 	for(indexImage=0;indexImage<noImages;indexImage++)
 	{
@@ -59,7 +52,7 @@ __kernel void reduceCenters(__global float *centers, __global const float *image
 			imageOffset = indexImage*imageSize;
 			for(centerIndex=0;centerIndex<imageSize;centerIndex++)
 			{
-				centerBuffer[centerIndex]=centerBuffer[centerIndex]+images[imageOffset+centerIndex];
+				centers[offsetSizeCenter+centerIndex]+=images[imageOffset+centerIndex];
 			}
 		}
 	}
@@ -67,7 +60,7 @@ __kernel void reduceCenters(__global float *centers, __global const float *image
 	{
 		for(centerIndex=0;centerIndex<imageSize;centerIndex++)
 		{
-			centers[offsetSizeCenter+centerIndex]=centerBuffer[centerIndex]/noMembers;
+			centers[offsetSizeCenter+centerIndex]/=noMembers;
 		}
 	}
 }

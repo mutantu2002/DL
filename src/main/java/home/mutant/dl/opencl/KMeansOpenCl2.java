@@ -19,8 +19,8 @@ import home.mutant.dl.utils.kmeans.Kmeans;
 
 public class KMeansOpenCl2 {
 	public static final int NO_CLUSTERS = 256;
-	public static final int WORK_ITEMS = 256*120;
-	public static final int NO_ITERATIONS = 20;
+	public static final int WORK_ITEMS = 256*234;
+	public static final int NO_ITERATIONS = 50;
 	public static final int IMAGE_SIZE = 784;
 	
 	public static void main(String[] args) throws Exception {
@@ -71,8 +71,13 @@ public class KMeansOpenCl2 {
 			
 			updateCenters.run(WORK_ITEMS, 256);
 			program.finish();
-			reduceCenters.run(NO_CLUSTERS, 256);
-			program.finish();
+			//reduceCenters.run(NO_CLUSTERS, 256);
+			//program.finish();
+			//memClusters.copyDtoH();
+			//System.out.println(memClusters);
+			memUpdates.copyDtoH();
+			updateCenters(images, clustersCenters, clustersUpdates);
+			memClusters.copyHtoD();
 			tTotal+=System.currentTimeMillis()-t0;
 			
 			System.out.println("Iteration "+iteration);
@@ -115,6 +120,23 @@ public class KMeansOpenCl2 {
 		ResultFrame frame = new ResultFrame(600, 600);
 		frame.showImages(imagesClusters);
 
+	}
+
+	private static void updateCenters(float[] images, float[] clustersCenters, int[] clustersUpdates) {
+		int[] clustersMembers = new int[NO_CLUSTERS];
+		for (int i=0;i<WORK_ITEMS;i++){
+			int toUpdate = clustersUpdates[i];
+			clustersMembers[toUpdate]++;
+			for (int j=0;j<IMAGE_SIZE;j++){
+				clustersCenters[toUpdate*IMAGE_SIZE+j]+=images[i*IMAGE_SIZE+j];
+			}
+		}
+		for (int i=0;i<NO_CLUSTERS;i++){
+			if (clustersMembers[i]==0) continue;
+			for (int j=0;j<IMAGE_SIZE;j++){
+				clustersCenters[i*IMAGE_SIZE+j]/=clustersMembers[i];
+			}
+		}
 	}
 
 	private static void randomizeCenters(float[] clustersCenters) {

@@ -14,7 +14,7 @@ public class RunImageKmeans {
 	public static void main(String[] args) throws Exception {
 		MnistDatabase.loadImages();
 		List<Clusterable> clusterables = new ArrayList<Clusterable>();
-		for (int i = 0; i < 30000; i++) {
+		for (int i = 0; i < 60000; i++) {
 			clusterables.add(new SimpleClusterable(MnistDatabase.trainImages.get(i).getDataDouble(),MnistDatabase.trainLabels.get(i)));
 		}
 		
