@@ -1,7 +1,6 @@
 package home.mutant.dl.utils.kmeans.model;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 
 import home.mutant.dl.models.Image;

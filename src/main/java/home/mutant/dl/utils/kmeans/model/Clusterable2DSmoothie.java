@@ -12,11 +12,16 @@ public class Clusterable2DSmoothie extends SimpleClusterable {
 	}
 	public Clusterable2DSmoothie(int size) {
 		super(size);
+		weights2d = new double [2][size];
 	}
 	public Clusterable2DSmoothie(double[] newImage, int label) {
 		super(newImage, label);
 	}
 
+	public Clusterable2DSmoothie(double[][] newImage, int label) {
+		super(newImage[0],label);
+		weights2d=newImage;
+	}
 	@Override
 	public double d(Clusterable clusterable) {
 		Clusterable2DSmoothie clusterable2d=(Clusterable2DSmoothie) clusterable;
@@ -31,23 +36,25 @@ public class Clusterable2DSmoothie extends SimpleClusterable {
 	@Override
 	public Clusterable copy() {
 		Clusterable2DSmoothie m = new Clusterable2DSmoothie(weights.length);
-		System.arraycopy(weights, 0, m.getWeights(), 0, weights.length);
+		System.arraycopy(weights2d[0], 0, m.weights2d[0], 0, weights.length);
+		System.arraycopy(weights2d[1], 0, m.weights2d[1], 0, weights.length);
 		return m;
 	}
 	@Override
 	public void updateCenterFromMembers(List<Clusterable> allList, List<Integer> cluster) {
 		for(int w=0; w<weights.length; w++)
 		{
-			int w0=0;
-			int w1=0;
+			double w0=0;
+			double w1=0;
 			for (int i = 0; i<cluster.size(); i++)
 			{
 				w0+=((Clusterable2DSmoothie)allList.get(cluster.get(i))).weights2d[0][w];
 				w1+=((Clusterable2DSmoothie)allList.get(cluster.get(i))).weights2d[1][w];
 			}
-			weights2d[0][w]=(short) (w0/cluster.size());
-			weights2d[1][w]=(short) (w1/cluster.size());
+			weights2d[0][w]= (w0/cluster.size());
+			weights2d[1][w]= (w1/cluster.size());
 		}
+		System.arraycopy(weights2d[0], 0, weights, 0, weights.length);
 	}
 	@Override
 	public Image getImage(){

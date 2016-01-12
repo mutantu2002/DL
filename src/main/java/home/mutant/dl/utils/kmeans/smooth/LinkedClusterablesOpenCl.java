@@ -1,34 +1,38 @@
 package home.mutant.dl.utils.kmeans.smooth;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import home.mutant.dl.models.Image;
 import home.mutant.dl.opencl.model.Kernel;
 import home.mutant.dl.opencl.model.MemoryDouble;
 import home.mutant.dl.opencl.model.Program;
 import home.mutant.dl.ui.ResultFrame;
+import home.mutant.dl.utils.Utils;
 import home.mutant.dl.utils.kmeans.model.Clusterable;
 import home.mutant.dl.utils.kmeans.model.ListClusterable;
 
-public class LinkedClusterablesOpenCl {
-	public double preDistances[];
-	ListClusterable filters;
-	double[] x;
-	double[] y;
-	double[] vx;
-	double[] vy;
-	double dt=0.0002;
-	double K=1;
-	double friction=0.1;
+public class LinkedClusterablesOpenCl implements Serializable{
+	private static final long serialVersionUID = -6967038438910323276L;
+	public transient double preDistances[];
+	public ListClusterable filters;
+	public double[] x;
+	public double[] y;
+	transient double[] vx;
+	transient double[] vy;
+	transient double dt=0.0002;
+	transient double K=1;
+	transient double friction=0.1;
 	
-	ResultFrame frame;
-	private MemoryDouble memX;
-	private MemoryDouble memY;
-	private MemoryDouble memVx;
-	private MemoryDouble memVy;
-	private MemoryDouble memPredistances;
-	private Kernel stepV;
-	private Program program;
+	transient ResultFrame frame;
+	private transient MemoryDouble memX;
+	private transient MemoryDouble memY;
+	private transient MemoryDouble memVx;
+	private transient MemoryDouble memVy;
+	private transient MemoryDouble memPredistances;
+	private transient Kernel stepV;
+	private transient Program program;
 	
 	public LinkedClusterablesOpenCl(ListClusterable clusterables) {
 		super();
@@ -95,7 +99,9 @@ public class LinkedClusterablesOpenCl {
 		}
 		frame.repaint();
 	}
-	
+	public void showFilters(){
+		filters.show();
+	}
 
 	public void stepV(){
 		stepV.run(filters.clusterables.size(), 256);

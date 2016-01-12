@@ -1,21 +1,24 @@
 package home.mutant.dl.utils.kmeans.smooth;
 
+import java.io.Serializable;
+
 import home.mutant.dl.ui.ResultFrame;
 import home.mutant.dl.utils.kmeans.model.Clusterable;
 import home.mutant.dl.utils.kmeans.model.ListClusterable;
 
-public class LinkedClusterables {
-	public double preDistances[][];
+public class LinkedClusterables implements Serializable{
+	private static final long serialVersionUID = 3560289806939024957L;
+	public transient double preDistances[][];
 	ListClusterable filters;
 	double[] x;
 	double[] y;
-	double[] vx;
-	double[] vy;
-	double dt=0.0002;
-	double K=1;
-	double friction=0.3;
+	transient double[] vx;
+	transient double[] vy;
+	transient double dt=0.0002;
+	transient double K=1;
+	transient double friction=0.3;
 	
-	ResultFrame frame;
+	transient ResultFrame frame;
 	
 	public LinkedClusterables(ListClusterable clusterables) {
 		super();
