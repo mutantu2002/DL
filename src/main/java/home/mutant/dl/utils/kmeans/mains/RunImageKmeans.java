@@ -29,7 +29,7 @@ public class RunImageKmeans {
 	
 	public static int run(List<Clusterable> train, List<Clusterable> test){
 		long t0 = System.currentTimeMillis();
-		List<Cluster> clusters = Kmeans.run(train, 320,true);
+		List<Cluster> clusters = Kmeans.run(train, 1000,true);
 		long tTotal=System.currentTimeMillis()-t0;
 		System.out.println("Time (sec) per iteration " + tTotal/1000./Kmeans.NO_ITERATIONS);
 		Cluster.showCenters(clusters);

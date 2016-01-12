@@ -12,7 +12,7 @@ import java.util.List;
 
 public class Kmeans
 {
-	public static final int NO_ITERATIONS = 20;
+	public static final int NO_ITERATIONS = 40;
 	private static final int NO_THREADS = 8;
 	private static final int INFLUENCE = 1;
 	private static final double MIN_DISTANCE_TO_ADD = 10;

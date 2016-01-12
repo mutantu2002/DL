@@ -1,13 +1,12 @@
 package home.mutant.dl.utils.kmeans.runnables;
 
+import java.util.List;
+
 import home.mutant.dl.utils.ImageUtils;
 import home.mutant.dl.utils.kmeans.model.Clusterable;
-import home.mutant.dl.utils.kmeans.model.Clusterable2D;
 import home.mutant.dl.utils.kmeans.model.ClusterablePreDistance;
 import home.mutant.dl.utils.kmeans.model.ListClusterable;
 import home.mutant.dl.utils.kmeans.model.SimpleClusterable;
-
-import java.util.List;
 
 public class TransformClusterablesRunnable implements Runnable{
 	List<Clusterable> toTransform;
