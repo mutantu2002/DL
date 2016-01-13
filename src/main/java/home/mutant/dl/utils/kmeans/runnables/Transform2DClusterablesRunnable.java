@@ -1,35 +1,38 @@
 package home.mutant.dl.utils.kmeans.runnables;
 
+import java.util.List;
+
 import home.mutant.dl.utils.ImageUtils;
 import home.mutant.dl.utils.kmeans.model.Clusterable;
-import home.mutant.dl.utils.kmeans.model.Clusterable2D;
 import home.mutant.dl.utils.kmeans.model.Clusterable2DSmoothie;
-import home.mutant.dl.utils.kmeans.model.ClusterablePreDistance;
-import home.mutant.dl.utils.kmeans.model.ListClusterable;
 import home.mutant.dl.utils.kmeans.model.SimpleClusterable;
 import home.mutant.dl.utils.kmeans.smooth.LinkedClusterablesOpenCl;
-
-import java.util.List;
 
 public class Transform2DClusterablesRunnable implements Runnable{
 	List<Clusterable> toTransform;
 	LinkedClusterablesOpenCl clusters;
+	int stride;
 	
-	public Transform2DClusterablesRunnable(List<Clusterable> toTransform, LinkedClusterablesOpenCl clusters) {
+	public Transform2DClusterablesRunnable(List<Clusterable> toTransform, LinkedClusterablesOpenCl clusters, int stride) {
 		super();
 		this.toTransform = toTransform;
 		this.clusters = clusters;
+		this.stride = stride;
 	}
 
+	public Transform2DClusterablesRunnable(List<Clusterable> toTransform, LinkedClusterablesOpenCl clusters) {
+		this(toTransform, clusters,1);
+	}
+	
 	@Override
 	public void run() {
 		int sizeSubImage = (int) Math.sqrt(clusters.filters.clusterables.get(0).getWeights().length);
 		int imageSize = (int) Math.sqrt(toTransform.get(0).getWeights().length);
-		int newImageSize = imageSize - sizeSubImage+1;
+		int newImageSize = (imageSize - sizeSubImage)/stride+1;
 		for(int i = 0;i<toTransform.size();i++){
 			Clusterable current = toTransform.get(i);
 			List<double[]> dividedImages = ImageUtils.divideImage(current.getWeights(), sizeSubImage, sizeSubImage, 
-					imageSize, imageSize, 1, 1);
+					imageSize, imageSize, stride, stride);
 			double[][] newImage = new double[2][newImageSize*newImageSize];
 			for (int j = 0; j < newImage[0].length; j++) {
 				SimpleClusterable sc = new SimpleClusterable(dividedImages.get(j));

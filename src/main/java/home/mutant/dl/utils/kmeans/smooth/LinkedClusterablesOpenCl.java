@@ -4,12 +4,10 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import home.mutant.dl.models.Image;
 import home.mutant.dl.opencl.model.Kernel;
 import home.mutant.dl.opencl.model.MemoryDouble;
 import home.mutant.dl.opencl.model.Program;
 import home.mutant.dl.ui.ResultFrame;
-import home.mutant.dl.utils.Utils;
 import home.mutant.dl.utils.kmeans.model.Clusterable;
 import home.mutant.dl.utils.kmeans.model.ListClusterable;
 
