@@ -53,13 +53,6 @@ public class KMeansOpenCl2 {
 		updateCenters.setArgument(memUpdates,2);
 		updateCenters.setArgument(NO_CLUSTERS, 3);
 		
-		
-		Kernel reduceCenters = new Kernel(program, "reduceCenters");
-		reduceCenters.setArgument(memClusters,0);
-		reduceCenters.setArgument(memImages,1);
-		reduceCenters.setArgument(memUpdates,2);
-		reduceCenters.setArgument(WORK_ITEMS, 3);
-		
 		long tTotal=0;
 		for (int i=0;i<WORK_ITEMS;i++){
 			System.arraycopy(MnistDatabase.trainImages.get(i).getDataFloat(), 0, images, i*(IMAGE_SIZE), IMAGE_SIZE);
@@ -69,10 +62,10 @@ public class KMeansOpenCl2 {
 		for (int iteration=0;iteration<NO_ITERATIONS;iteration++){
 			long t0 = System.currentTimeMillis();
 			
-			updateCenters.run(WORK_ITEMS, 256);
+			updateCenters.run(WORK_ITEMS, 1024);
 			program.finish();
 			memUpdates.copyDtoH();
-			updateCenters(images, clustersCenters, clustersUpdates);
+			reduceCenters(images, clustersCenters, clustersUpdates);
 			memClusters.copyHtoD();
 			tTotal+=System.currentTimeMillis()-t0;
 			
@@ -118,7 +111,7 @@ public class KMeansOpenCl2 {
 
 	}
 
-	private static void updateCenters(float[] images, float[] clustersCenters, int[] clustersUpdates) {
+	private static void reduceCenters(float[] images, float[] clustersCenters, int[] clustersUpdates) {
 		int[] clustersMembers = new int[NO_CLUSTERS];
 		for (int i=0;i<WORK_ITEMS;i++){
 			int toUpdate = clustersUpdates[i];

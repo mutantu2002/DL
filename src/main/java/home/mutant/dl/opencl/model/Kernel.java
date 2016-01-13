@@ -14,6 +14,9 @@ public class Kernel {
 		super();
 		this.program = program;
 		clKernel = clCreateKernel(program.getProgram(), functionName, null);
+        long[] size=new long[1];
+        clGetKernelWorkGroupInfo(clKernel,program.getDevice(), CL_KERNEL_WORK_GROUP_SIZE, Sizeof.cl_ulong, Pointer.to(size), null);
+        System.out.println(size[0]);
 	}
 	
 	public void setArgument(MemoryDouble memory, int index){

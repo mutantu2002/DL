@@ -23,6 +23,7 @@ public class Program
 	cl_command_queue clCommandQueue;
 	cl_program clProgram;
 	cl_context clContext;
+	cl_device_id device;
 	
 	public Program(String source)
 	{
@@ -59,7 +60,7 @@ public class Program
         // Obtain a device ID 
         cl_device_id devices[] = new cl_device_id[numDevices];
         clGetDeviceIDs(platform, deviceType, numDevices, devices, null);
-        cl_device_id device = devices[deviceIndex];
+        device = devices[deviceIndex];
 
         long[] size=new long[1];
         clGetDeviceInfo(device, CL_DEVICE_LOCAL_MEM_SIZE, Sizeof.cl_ulong, Pointer.to(size), null);
@@ -111,5 +112,11 @@ public class Program
 			e.printStackTrace();
 		}
 		return text;
+	}
+	public cl_device_id getDevice() {
+		return device;
+	}
+	public void setDevice(cl_device_id device) {
+		this.device = device;
 	}
 }
