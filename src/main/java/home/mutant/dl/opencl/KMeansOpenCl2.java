@@ -62,7 +62,7 @@ public class KMeansOpenCl2 {
 		for (int iteration=0;iteration<NO_ITERATIONS;iteration++){
 			long t0 = System.currentTimeMillis();
 			
-			updateCenters.run(WORK_ITEMS, 1024);
+			updateCenters.run(WORK_ITEMS, 256);
 			program.finish();
 			memUpdates.copyDtoH();
 			reduceCenters(images, clustersCenters, clustersUpdates);
