@@ -1,4 +1,4 @@
-package home.mutant.dl.opencl;
+package home.mutant.dl.gaussian;
 
 import home.mutant.dl.models.Image;
 import home.mutant.dl.ui.ResultFrame;
