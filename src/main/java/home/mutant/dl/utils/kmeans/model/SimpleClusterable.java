@@ -8,7 +8,7 @@ import home.mutant.dl.models.ImageDouble;
 
 public class SimpleClusterable implements Clusterable,Serializable {
 	private static final long serialVersionUID = 6582606937177300533L;
-	double weights[];
+	protected double weights[];
 	int label;
 	
 	public SimpleClusterable(int size) {
