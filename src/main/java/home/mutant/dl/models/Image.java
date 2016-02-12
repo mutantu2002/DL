@@ -84,10 +84,16 @@ public abstract class Image implements Serializable
 		return extracted;
 	}
 	public Image scaleImage(double scale) {
-		Image scaled= createImage(this.imageX,this.imageY);
+		Image scaled= createImage((int)(this.imageX*scale),(int)(this.imageY*scale));
 		BufferedImage bufferedImage = ImageUtils.createBufferedImage(this);
 		scaled.convert(ImageUtils.scaleImage(bufferedImage, scale));
 		return scaled;
+	}
+	
+	public Image padImage(int padding) {
+		Image padded= createImage(2*padding+this.imageX,2*padding+this.imageY);
+		padded.pasteImage(this, padding, padding);
+		return padded;
 	}
 	
 	public abstract void normalize();

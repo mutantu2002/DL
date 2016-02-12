@@ -43,7 +43,12 @@ public class MnistDatabase
 		replaceImagesWithScaled(trainImages, scale);
 		replaceImagesWithScaled(testImages, scale);
 	}
-	
+	public static void loadImagesPadded(int padding) throws IOException
+	{
+		MnistDatabase.loadImages();
+		replaceImagesWithPadded(trainImages, padding);
+		replaceImagesWithPadded(testImages, padding);
+	}
 	public static void loadImagesBlured() throws IOException
 	{
 		MnistDatabase.loadImages();
@@ -84,6 +89,12 @@ public class MnistDatabase
 		for(int i=0;i<images.size();i++)
 		{
 			images.get(i).normalize();
+		}
+	}
+	public static void replaceImagesWithPadded(List<Image> images,int padding){
+		for(int i=0;i<images.size();i++)
+		{
+			images.set(i, images.get(i).padImage(padding));
 		}
 	}
 }
