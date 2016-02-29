@@ -13,7 +13,7 @@ public class Net2Layers {
 	public double[] targets;
 	
 	public static void main(String[] args) throws Exception {
-		new Net2Layers(784, 10,10).train();
+		new Net2Layers(784, 40,10).train();
 	}
 	
 	private void train() throws Exception {

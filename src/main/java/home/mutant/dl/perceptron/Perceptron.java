@@ -5,7 +5,7 @@ import home.mutant.dl.models.ImageDouble;
 
 public class Perceptron {
 	public double[] coefficients;
-	public double learningRate = 0.0008;//Math.random()/100;
+	public double learningRate = 1;//0.0008;//Math.random()/100;
 	public double regularizationRate =  0.000001;
 	public double activation = 0;
 	public enum InitType{RANDOM, SINUS, GAUSS, NO_INIT, CONSTANT}
@@ -109,9 +109,9 @@ public class Perceptron {
 	
 	public void modifyWeights(double[] data, double sign){
 		for (int i = 0; i < data.length; i++) {
-			coefficients[i]+=sign*data[i]*learningRate-coefficients[i]*regularizationRate;
+			coefficients[i]+=sign*data[i]*learningRate;//-coefficients[i]*regularizationRate;
 		}
-		coefficients[coefficients.length-1]+=sign*learningRate-coefficients[coefficients.length-1]*regularizationRate;
+		coefficients[coefficients.length-1]+=sign*learningRate;//-coefficients[coefficients.length-1]*regularizationRate;
 	}
 	
 	public void trainData(double[] data, boolean isClass){

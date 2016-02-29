@@ -25,7 +25,7 @@ public class Layer {
 	
 	public void forward(double[] data){
 		for (int i = 0; i < perceptrons.size(); i++) {
-			activations[i] = perceptrons.get(i).calculateActivation(data);
+			activations[i] = perceptrons.get(i).outputDouble(data);
 		}
 	}
 	

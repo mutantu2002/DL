@@ -47,11 +47,14 @@ public class HiddenLayer extends Layer{
 	
 	public void backward(double[] errors, double[] data){
 		for (int i = 0; i < perceptrons.size(); i++) {
-			if (errors[i]!=0) 
-			{
-				if (activations[i]>0)perceptrons.get(i).modifyWeights(data, errors[i]);
-				else perceptrons.get(i).modifyWeights(data, errors[i]/5);
-			}
+//			if (errors[i]!=0) 
+//			{
+//				if (activations[i]>0)perceptrons.get(i).modifyWeights(data, errors[i]);
+//				else perceptrons.get(i).modifyWeights(data, errors[i]/5);
+//			}
+			if(errors[i]==0) continue;
+			if(errors[i]<0)perceptrons.get(i).modifyWeights(data, -1);
+			else perceptrons.get(i).modifyWeights(data, 1);
 		}
 	}
 	
