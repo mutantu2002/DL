@@ -4,6 +4,7 @@ import home.mutant.dl.models.Image;
 import home.mutant.dl.models.ImageFloat;
 import home.mutant.dl.ui.ResultFrame;
 import home.mutant.dl.utils.ImageUtils;
+import home.mutant.dl.utils.MathUtils;
 import home.mutant.dl.utils.MnistDatabase;
 import home.mutant.dl.utils.MnistDatabase.TYPE;
 
@@ -14,6 +15,7 @@ public class ShowMnist
 {
 	public static void main(String[] args) throws Exception
 	{
+		System.out.println(MathUtils.gaussian(50, 20));
 		ResultFrame frame = new ResultFrame(1200, 600);
 		MnistDatabase.IMAGE_TYPE = TYPE.FLOAT;
 		MnistDatabase.loadImages();
@@ -23,7 +25,7 @@ public class ShowMnist
 		for (float[] image : dividedImages) {
 			images.add(new ImageFloat(image));
 		}
-		frame.showImages(images);
+		frame.showImages(MnistDatabase.trainImages.subList(0, 25),5);
 		//frame.showImage(ImageUtils.scaleImage(ImageUtils.gradientImage(MnistDatabase.trainImages.get(0)), 10));
 	}
 }
