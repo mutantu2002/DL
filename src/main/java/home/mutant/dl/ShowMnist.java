@@ -15,7 +15,11 @@ public class ShowMnist
 {
 	public static void main(String[] args) throws Exception
 	{
-		System.out.println(MathUtils.gaussian(50, 20));
+		int s=0;
+		for (int i=0;i<1000;i++){
+			s+=2-(int)(5*Math.random());
+		}
+		System.out.println(s);
 		ResultFrame frame = new ResultFrame(1200, 600);
 		MnistDatabase.IMAGE_TYPE = TYPE.FLOAT;
 		MnistDatabase.loadImages();

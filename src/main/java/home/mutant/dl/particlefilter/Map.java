@@ -11,8 +11,8 @@ public class Map {
 		int dimImages = (int) Math.sqrt(images.get(0).getDataFloat().length);
 		int i=0;
 		map = new ImageFloat(dimImages*dimNoImages, dimImages*dimNoImages);
-		for(int x=0;x<dimNoImages;x++){
-			for(int y=0;y<dimNoImages;y++){
+		for(int y=0;y<dimNoImages;y++){
+			for(int x=0;x<dimNoImages;x++){
 				map.pasteImage(images.get(i++), x*dimImages, y*dimImages);
 			}
 		}

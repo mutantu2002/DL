@@ -18,7 +18,7 @@ public class ParticleFilter {
 	int noParticles;
 	int xInput;
 	int yInput;
-	
+	int step=0;
 	public ParticleFilter(Image mapImage, Image inputImage, int noParticles){
 		this.mapImage=mapImage;
 		this.inputImage=inputImage;
@@ -43,17 +43,29 @@ public class ParticleFilter {
 	}
 	public void step(){
 		float measurement = inputImage.getDataFloat()[yInput*dimImage+xInput];
+		System.out.println(measurement);
 		estimateParticlesWeights(measurement);
 		normalizeWeights();
 		recreateParticles();
 		int xNew=xInput;
 		int yNew=yInput;
-		xNew=(int) (dimImage-dimImage*Math.random());
-		if(xNew>=dimImage)xNew=dimImage-1;
-		if(xNew<0)xNew=0;
-		yNew=(int) (dimImage-dimImage*Math.random());
-		if(yNew>=dimImage)yNew=dimImage-1;
-		if(yNew<0)yNew=0;
+		
+		boolean test;
+		do{
+			xNew=(int) (dimImage-dimImage*Math.random());
+			if(xNew>=dimImage)xNew=dimImage-1;
+			if(xNew<0)xNew=0;
+			yNew=(int) (dimImage-dimImage*Math.random());
+			if(yNew>=dimImage)yNew=dimImage-1;
+			if(yNew<0)yNew=0;
+			
+			if(step%2==0){
+				test=inputImage.getDataFloat()[yNew*dimImage+xNew]==0;
+			}else{
+				test=inputImage.getDataFloat()[yNew*dimImage+xNew]!=0;
+			}
+		}while(test);
+		step++;
 		moveParticles(xNew-xInput, yNew-yInput);
 		xInput=xNew;
 		yInput=yNew;
@@ -97,10 +109,10 @@ public class ParticleFilter {
 	private void moveParticles(int x, int y){
 		for(int i=0;i<particles.size();i++){
 			Particle p = particles.get(i);
-			p.x+=x+2-4*Math.random();
+			p.x+=x+1-(int)(3*Math.random());
 			if(p.x>=dimMap)p.x=dimMap-1;
 			if(p.x<0)p.x=0;
-			p.y+=y+2-4*Math.random();
+			p.y+=y+1-(int)(3*Math.random());
 			if(p.y>=dimMap)p.y=dimMap-1;
 			if(p.y<0)p.y=0;
 		}
@@ -110,7 +122,7 @@ public class ParticleFilter {
 		Image imgParticles = new ImageFloat(mapImage.getDataFloat().length);
 		for(int i=0;i<particles.size();i++){
 			Particle p = particles.get(i);
-			double value = imgParticles.getPixel(p.x, p.y)+1;
+			double value = imgParticles.getPixel(p.x, p.y)+10;
 			if(value>255)value=255;
 			imgParticles.setPixel(p.x, p.y, value);
 		}
