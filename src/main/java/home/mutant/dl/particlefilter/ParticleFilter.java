@@ -8,6 +8,7 @@ import home.mutant.dl.models.ImageFloat;
 import home.mutant.dl.utils.MathUtils;
 
 public class ParticleFilter {
+	public static final int NO_RND=1000;
 	Image mapImage;
 	Image inputImage;
 	int dimMap;
@@ -19,6 +20,7 @@ public class ParticleFilter {
 	int xInput;
 	int yInput;
 	int step=0;
+	int[] rnd = new int[NO_RND];
 	public ParticleFilter(Image mapImage, Image inputImage, int noParticles){
 		this.mapImage=mapImage;
 		this.inputImage=inputImage;
@@ -30,6 +32,9 @@ public class ParticleFilter {
 		initParticles();
 		xInput=dimImage/2;
 		yInput=dimImage/2;
+		for (int i=0;i<NO_RND;i++){
+			rnd[i]=2-(int)(5*Math.random());
+		}
 	}
 
 	private void initParticles() {
@@ -37,14 +42,13 @@ public class ParticleFilter {
 			Particle p = new Particle();
 			p.x=(int) (Math.random()*dimMap);
 			p.y=(int) (Math.random()*dimMap);
-			p.weight=(float) (1./noParticles);
+			p.weight=1./noParticles;
 			particles.add(p);
 		}
 	}
 	public void step(){
 		float measurement = inputImage.getDataFloat()[yInput*dimImage+xInput];
-		System.out.println(measurement);
-		estimateParticlesWeights(measurement);
+		//estimateParticlesWeights(measurement);
 		normalizeWeights();
 		recreateParticles();
 		int xNew=xInput;
@@ -69,7 +73,6 @@ public class ParticleFilter {
 		moveParticles(xNew-xInput, yNew-yInput);
 		xInput=xNew;
 		yInput=yNew;
-		System.out.println(xInput+";"+yInput);
 	}
 	private void estimateParticlesWeights(float measurement){
 		for(int i=0;i<particles.size();i++){
@@ -86,9 +89,9 @@ public class ParticleFilter {
 		for(int i=0;i<particles.size();i++){
 			particles.get(i).weight/=sum;
 		}
-		System.out.println("sum "+sum);
 	}
-	private void recreateParticles(){
+	@SuppressWarnings("unused")
+	private void recreateParticles2(){
 		List<Particle> newParticles = new ArrayList<>();
 		int i=0;
 		while(newParticles.size()<particles.size()){
@@ -106,13 +109,31 @@ public class ParticleFilter {
 		particles=newParticles;
 	}
 	
-	private void moveParticles(int x, int y){
+	private void recreateParticles(){
+		List<Particle> newParticles = new ArrayList<>();
 		for(int i=0;i<particles.size();i++){
 			Particle p = particles.get(i);
-			p.x+=x+1-(int)(3*Math.random());
+			int noNew = (int) (p.weight*noParticles);
+			for(int newI=0;newI<noNew;newI++){
+				Particle pNew = new Particle();
+				pNew.x=p.x;
+				pNew.y=p.y;
+				pNew.weight=1./noParticles;
+				newParticles.add(pNew);
+			}
+		}
+		particles=newParticles;
+	}
+	private void moveParticles(int x, int y){
+		int index = (int) (NO_RND * Math.random());
+		for(int i=0;i<particles.size();i++){
+			Particle p = particles.get(i);
+			p.x+=x+rnd[index++];
+			index%=NO_RND;
 			if(p.x>=dimMap)p.x=dimMap-1;
 			if(p.x<0)p.x=0;
-			p.y+=y+1-(int)(3*Math.random());
+			p.y+=y+rnd[index];
+			index%=NO_RND;
 			if(p.y>=dimMap)p.y=dimMap-1;
 			if(p.y<0)p.y=0;
 		}
@@ -122,7 +143,7 @@ public class ParticleFilter {
 		Image imgParticles = new ImageFloat(mapImage.getDataFloat().length);
 		for(int i=0;i<particles.size();i++){
 			Particle p = particles.get(i);
-			double value = imgParticles.getPixel(p.x, p.y)+10;
+			double value = imgParticles.getPixel(p.x, p.y)+1;
 			if(value>255)value=255;
 			imgParticles.setPixel(p.x, p.y, value);
 		}
