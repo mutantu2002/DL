@@ -48,7 +48,7 @@ public class ParticleFilter {
 	}
 	public void step(){
 		float measurement = inputImage.getDataFloat()[yInput*dimImage+xInput];
-		//estimateParticlesWeights(measurement);
+		estimateParticlesWeights(measurement);
 		normalizeWeights();
 		recreateParticles();
 		int xNew=xInput;
