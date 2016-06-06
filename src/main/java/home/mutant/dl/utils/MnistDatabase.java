@@ -9,7 +9,7 @@ import java.util.List;
 
 public class MnistDatabase
 {
-	public enum TYPE{FLOAT,DOUBLE};
+	public enum TYPE{FLOAT,DOUBLE,SHORT};
 	public static TYPE IMAGE_TYPE = TYPE.DOUBLE;
 	public static List<Image> trainImages = new ArrayList<Image>();
 	public static List<Integer> trainLabels  = new ArrayList<Integer>();

@@ -1,6 +1,7 @@
 package home.mutant.dl.models;
 
 public class ImageDouble extends Image {
+	private static final long serialVersionUID = 1L;
 	private double[] data = null ;
 	
 	public ImageDouble(double[] data, int x, int y)
@@ -49,6 +50,10 @@ public class ImageDouble extends Image {
 	}
 	@Override
 	public float[] getDataFloat() {
+		return null;
+	}
+	@Override
+	public short[] getDataShort() {
 		return null;
 	}
 	@Override

@@ -1,30 +1,30 @@
 package home.mutant.dl.models;
 
-public class ImageFloat extends Image {
+public class ImageShort extends Image {
 	private static final long serialVersionUID = 1L;
-	private float[] data = null ;
+	private short[] data = null ;
 	
-	public ImageFloat(float[] data, int x, int y)
+	public ImageShort(short[] data, int x, int y)
 	{
 		super(x,y);
 		this.data = data;
 	}
-	public ImageFloat(float[] data)
+	public ImageShort(short[] data)
 	{
 		this(data, (int)Math.sqrt(data.length), (int)Math.sqrt(data.length));
 	}
-	public ImageFloat(int size)
+	public ImageShort(int size)
 	{
 		super(size);
-		this.data = new float[size];
+		this.data = new short[size];
 	}
-	public ImageFloat(int x, int y)
+	public ImageShort(int x, int y)
 	{
 		super(x,y);
-		this.data = new float[x*y];
+		this.data = new short[x*y];
 	}
 	
-	public ImageFloat(byte[][] bs) 
+	public ImageShort(byte[][] bs) 
 	{
 		this( bs.length, bs[0].length);
 		convert(bs);
@@ -37,12 +37,12 @@ public class ImageFloat extends Image {
 		}
 		sum/=data.length;
 		for(int i=0;i<data.length;i++){
-			data[i] = (float) ((data[i]-sum)/128);
+			data[i] = (short) ((data[i]-sum)/128);
 		}
 	}
 	@Override
 	public void setValue(int offset, double value) {
-		data[offset] = (float) value;
+		data[offset] = (short) value;
 		
 	}
 	@Override
@@ -55,15 +55,15 @@ public class ImageFloat extends Image {
 	}
 	@Override
 	public float[] getDataFloat() {
-		return data;
-	}
-	@Override
-	public short[] getDataShort() {
 		return null;
 	}
 	@Override
+	public short[] getDataShort() {
+		return data;
+	}
+	@Override
 	public Image createImage(int X, int Y) {
-		return new ImageFloat(X, Y);
+		return new ImageShort(X, Y);
 	}
 	@Override
 	public Image transformGauss(Image[] subImages) {
@@ -73,7 +73,7 @@ public class ImageFloat extends Image {
 		float normalize=0;
 		float max=0;
 		float min=1000000000;
-		Image result = new ImageFloat((imageX-subImageX+1)*subImagesSqrt, (imageY-subImageX+1)*subImagesSqrt);
+		Image result = new ImageShort((imageX-subImageX+1)*subImagesSqrt, (imageY-subImageX+1)*subImagesSqrt);
 		for(int x=0;x<=imageX-subImageX;x++){
 			for(int y=0;y<=imageX-subImageX;y++){
 				int offsetSubImage=0;
@@ -101,7 +101,7 @@ public class ImageFloat extends Image {
 		int offsetSubImage=0;
 		for(int x=X;x<X+subImageX;x++){
 			for(int y=Y;y<Y+subImageX;y++){
-				float t = subImage.getDataFloat()[offsetSubImage++];
+				float t = subImage.getDataShort()[offsetSubImage++];
 				s+=(data[y*imageX+x]-t)*(data[y*imageX+x]-t);
 			}
 		}

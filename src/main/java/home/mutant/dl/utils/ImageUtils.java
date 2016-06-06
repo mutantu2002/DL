@@ -3,6 +3,7 @@ package home.mutant.dl.utils;
 import home.mutant.dl.models.Image;
 import home.mutant.dl.models.ImageDouble;
 import home.mutant.dl.models.ImageFloat;
+import home.mutant.dl.models.ImageShort;
 import home.mutant.dl.utils.MnistDatabase.TYPE;
 
 import java.awt.Color;
@@ -89,13 +90,14 @@ public class ImageUtils
 		for (byte[][] bs : bytes) 
 		{
 			Image newImage;
-			if (MnistDatabase.IMAGE_TYPE==TYPE.DOUBLE)
-			{
+			if (MnistDatabase.IMAGE_TYPE==TYPE.DOUBLE){
 				newImage = new ImageDouble(bs);
 			}
-			else
-			{
+			else if(MnistDatabase.IMAGE_TYPE==TYPE.FLOAT){
 				newImage = new ImageFloat(bs);
+			}
+			else{
+				newImage = new ImageShort(bs);
 			}
 			images.add(newImage);
 		}

@@ -7,6 +7,7 @@ import java.io.Serializable;
 
 public abstract class Image implements Serializable
 {
+	private static final long serialVersionUID = 1L;
 	public int imageX,imageY;
 	
 	public Image(int x, int y)
@@ -101,6 +102,7 @@ public abstract class Image implements Serializable
 	public abstract double getValue(int offset);
 	public abstract double[] getDataDouble();
 	public abstract float[] getDataFloat();
+	public abstract short[] getDataShort();
 	public abstract Image createImage(int X, int Y);
 	public abstract Image transformGauss(Image[] subImages);
 
