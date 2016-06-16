@@ -17,6 +17,16 @@ public class MnistDatabase
 	public static List<Image> testImages = new ArrayList<Image>();
 	public static List<Integer> testLabels  = new ArrayList<Integer>();
 	
+	public static List<List<Image>> getImagesByType(){
+		List<List<Image>> trainImagesByType = new ArrayList<>();
+		for(int i=0;i<10;i++){
+			trainImagesByType.add(new ArrayList<>());
+		}
+		for(int i=0;i<trainImages.size();i++){
+			trainImagesByType.get(trainLabels.get(i)).add(trainImages.get(i));
+		}
+		return trainImagesByType;
+	}
 	public static void loadImages() throws IOException
 	{
 		ImageUtils.loadImages(trainImages, testImages, trainLabels, testLabels);
