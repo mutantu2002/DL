@@ -1,10 +1,13 @@
 package home.mutant.dl.perceptron;
 
+import java.util.Arrays;
+
 import home.mutant.dl.models.Image;
 import home.mutant.dl.models.ImageDouble;
 
 public class Perceptron {
 	public double[] coefficients;
+	public double[] delta;
 	public double learningRate = 1;//0.0008;//Math.random()/100;
 	public double regularizationRate =  0.000001;
 	public double activation = 0;
@@ -19,6 +22,7 @@ public class Perceptron {
 	
 	public Perceptron(int size, double scale, InitType type){
 		coefficients = new double[size+1];
+		delta = new double[size+1];
 		switch(type){
 			case RANDOM: randomize(scale);break;
 			case SINUS: initSinus(scale);break;
@@ -113,6 +117,19 @@ public class Perceptron {
 		}
 		coefficients[coefficients.length-1]+=sign*learningRate;//-coefficients[coefficients.length-1]*regularizationRate;
 	}
+
+	public void modifyWeightsFromDelta(int noBatch){
+		for (int i = 0; i < delta.length; i++) {
+			coefficients[i]+=delta[i]*learningRate/noBatch;
+		}
+	}
+	
+	public void modifyDelta(double[] data, double sign){
+		for (int i = 0; i < data.length; i++) {
+			delta[i]+=sign*data[i];
+		}
+		delta[delta.length-1]+=sign;
+	}	
 	
 	public void trainData(double[] data, boolean isClass){
 		boolean isCorrect = output(data);
@@ -125,16 +142,24 @@ public class Perceptron {
 	}
 	
 	public double trainData(float[] data, double target){
-		double error = outputDouble(data)-target;
-		modifyWeights(data, -error);
+		double error = target - outputDouble(data);
+		modifyWeights(data, error);
 		return error;
 	}
 	
 	public double trainData(double[] data, double target){
-		double error = outputDouble(data)-target;
-		modifyWeights(data, -error);
+		double error = target - outputDouble(data);
+		if(error!=0)
+			modifyWeights(data, error);
 		return error;
 	}
+	
+	public double accumulateDelta(double[] data, double target){
+		double error = target - outputDouble(data);
+		if(error!=0)
+			modifyDelta(data, error);
+		return error;
+	}	
 	
 	public Image getImage(){
 		Image image = new ImageDouble(coefficients.length-1);
@@ -158,5 +183,9 @@ public class Perceptron {
 
 	public void increaseLearningRate() {
 		learningRate*=10;
+	}
+
+	public void clearDelta() {
+		Arrays.fill(delta, 0);
 	}
 }

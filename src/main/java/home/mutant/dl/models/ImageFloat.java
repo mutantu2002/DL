@@ -30,7 +30,7 @@ public class ImageFloat extends Image {
 		convert(bs);
 	}
 	
-	public void normalize(){
+	public void normalize_old(){
 		double sum=0;
 		for(int i=0;i<data.length;i++){
 			sum += data[i];
@@ -38,6 +38,11 @@ public class ImageFloat extends Image {
 		sum/=data.length;
 		for(int i=0;i<data.length;i++){
 			data[i] = (float) ((data[i]-sum)/128);
+		}
+	}
+	public void normalize(){
+		for(int i=0;i<data.length;i++){
+			data[i] = (float) ((data[i])/256);
 		}
 	}
 	@Override
